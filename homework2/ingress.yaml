@@ -3,7 +3,7 @@ kind: Ingress
 metadata:
   name: hello-ingress
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
   ingressClassName: nginx
   rules:
@@ -11,7 +11,7 @@ spec:
     http:
       paths:
         - pathType: Prefix
-          path: /
+          path: /health
           backend:
             service:
                 name: hello-service
