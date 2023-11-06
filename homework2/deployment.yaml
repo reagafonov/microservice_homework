@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: hello-deployment
+    name: homework-deployment
 spec:
-    replicas: 2
+    replicas: 3
     selector:
        matchLabels:
-          app: hello-cs-app
+          app: homework-app
     template:
        metadata:
           labels:
-             app: hello-cs-app
+             app: homework-app
        spec:
           containers:
-          - name: hello-cs
-            image: reagafonov/docker-health:v1
+          - name: homework-app-continer
+            image: reagafonov/homework-py:v1
             ports:
               - name: web
-                containerPort: 80
+                containerPort: 8000
 

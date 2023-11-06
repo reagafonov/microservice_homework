@@ -1,9 +1,9 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: hello-ingress
+  name: homework-ingress
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/rewrite-target: /health
 spec:
   ingressClassName: nginx
   rules:
@@ -11,10 +11,17 @@ spec:
     http:
       paths:
         - pathType: Prefix
+          path: /otusapp($|/)(.*)/health
+          backend:
+            service:
+                name: homework-service
+                port:
+                    number: 8000
+        - pathType: Prefix
           path: /health
           backend:
             service:
-                name: hello-service
-                port:
-                    number: 9000
+              name: homework-service
+              port:
+                number: 8000
 
