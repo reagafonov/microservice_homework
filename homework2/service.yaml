@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: hello-service
+  name: homework-service
 spec:
   selector:
-    app: hello-cs-app
+    app: homework-app
   ports:
     - protocol: TCP
-      port: 9000
-      targetPort: 8000
+      port: 8000
+      targetPort: web
   type: NodePort
 
