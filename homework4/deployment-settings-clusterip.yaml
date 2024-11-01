@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: vparking-settings-deployment
+spec:
+    replicas: 3
+    selector:
+       matchLabels:
+          app: vparking-settings-app
+    template:
+       metadata:
+          labels:
+             app: vparking-settings-app
+       spec:
+          containers:
+          - name: settings
+            image: reagafonov/vparking-settings-arm64:v9
+            ports:
+              - containerPort: 8080
+            env:
+              - name: "PG_CONNECTION_SERVER"
+                value: "keycloak-db-postgresql.keycloak.svc.cluster.local"
+              - name: "PG_CONNECTION_PASSWORD"
+                value: "9ZuzN0KZHl"
+              - name: "PG_CONNECTION_USER"
+                value: "keycloak"
+
+           
+          

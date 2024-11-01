@@ -1,0 +1,4 @@
+auth:
+  password: "9ZuzN0KZHl"
+  username: "keycloak"
+  database: "keycloak_db"

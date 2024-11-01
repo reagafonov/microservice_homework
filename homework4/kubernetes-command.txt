@@ -1,0 +1,1 @@
+ kubectl apply -f deployment-settings-clusterip.yaml -f service-settings-clusterip.yaml -f ingress-settings-clusterip.yaml    

@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: migrate-settings
+spec:
+  template:
+    spec:
+      containers:
+        - name: settings-migrate
+          image: reagafonov/vparking-settings-arm64:v9
+          command: ["/bin/bash","-c","dotnet tool install --global dotnet-ef --version 8.0.10 && export PATH=\"$PATH:/root/.dotnet/tools\" && dotnet ef database update --project /src/Infrastructure/Infrastructure.EntityFramework --startup-project /src/VParkingSettings/"]
+          env:
+            - name: "PG_CONNECTION_SERVER"
+              value: "keycloak-db-postgresql.keycloak.svc.cluster.local"
+            - name: "PG_CONNECTION_PASSWORD"
+              value: "9ZuzN0KZHl"
+            - name: "PG_CONNECTION_USER"
+              value: "keycloak"
+        
+      restartPolicy: Never

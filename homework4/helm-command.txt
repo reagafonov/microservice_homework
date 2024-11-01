@@ -1,0 +1,3 @@
+helm install -f template/postgres-values.yaml keycloak-db bitnami/postgresql \ 
+--namespace keycloak \
+--create-namespace
