@@ -14,16 +14,25 @@ spec:
        spec:
           containers:
           - name: settings
-            image: reagafonov/vparking-settings-arm64:v9
+            image: reagafonov/vparking-settings-arm64:v20
+
             ports:
               - containerPort: 8080
             env:
               - name: "PG_CONNECTION_SERVER"
-                value: "keycloak-db-postgresql.keycloak.svc.cluster.local"
+                valueFrom:
+                  secretKeyRef:
+                    name: settings-secret
+                    key: database-server-name
               - name: "PG_CONNECTION_PASSWORD"
-                value: "9ZuzN0KZHl"
+                valueFrom:
+                  secretKeyRef:
+                    key: database-user-password
+                    name: settings-secret
               - name: "PG_CONNECTION_USER"
-                value: "keycloak"
-
+                valueFrom:
+                  secretKeyRef:
+                    key: database-user-name
+                    name: settings-secret
            
           
