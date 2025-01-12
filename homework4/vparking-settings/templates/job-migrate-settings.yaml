@@ -11,13 +11,19 @@ spec:
           command: ["/bin/bash","-c","dotnet tool install --global dotnet-ef --version 8.0.10 && export PATH=\"$PATH:/root/.dotnet/tools\" && dotnet ef database update --project /src/Infrastructure/Infrastructure.EntityFramework --startup-project /src/VParkingSettings/"]
           env:
             - name: "PG_CONNECTION_SERVER"
-              value: "{{.Values.postgresql.auth.database}}"
+              valueFrom:
+                configMapKeyRef:
+                  key: db-server
+                  name: config-map-settings
             - name: "PG_CONNECTION_PASSWORD"
               valueFrom:
                 secretKeyRef:
-                  key: password
-                  name: settings-postgresql
+                  key: database-user-password
+                  name: settings-secret
             - name: "PG_CONNECTION_USER"
-              value: "{{.Values.postgresql.auth.username}}"
+              valueFrom:
+                configMapKeyRef:
+                  name: config-map-settings
+                  key: db-username
       
       restartPolicy: Never

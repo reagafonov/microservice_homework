@@ -42,14 +42,20 @@ spec:
               protocol: TCP
           env:
             - name: "PG_CONNECTION_SERVER"
-              value: "{{.Values.postgresql.auth.database}}"
+              valueFrom:
+                configMapKeyRef:
+                  key: db-server
+                  name: config-map-settings
             - name: "PG_CONNECTION_PASSWORD"
               valueFrom:
                 secretKeyRef:
-                  key: password
-                  name: settings-postgresql
+                  key: database-user-password
+                  name: settings-secret
             - name: "PG_CONNECTION_USER"
-              value: "{{.Values.postgresql.auth.username}}"
+              valueFrom:
+                configMapKeyRef:
+                  key: db-username
+                  name: config-map-settings
           livenessProbe:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
           readinessProbe:
