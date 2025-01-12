@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: migrate-{{ include "vparking-settings.fullname" . }}
+spec:
+  template:
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}-migrate
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          command: ["/bin/bash","-c","dotnet tool install --global dotnet-ef --version 8.0.10 && export PATH=\"$PATH:/root/.dotnet/tools\" && dotnet ef database update --project /src/Infrastructure/Infrastructure.EntityFramework --startup-project /src/VParkingSettings/"]
+          env:
+            - name: "PG_CONNECTION_SERVER"
+              value: "{{.Values.postgresql.auth.database}}"
+            - name: "PG_CONNECTION_PASSWORD"
+              value: "{{.Values.postgresql.auth.password}}"
+            - name: "PG_CONNECTION_USER"
+              value: "{{.Values.postgresql.auth.username}}"
+      
+      restartPolicy: Never
