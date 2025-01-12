@@ -128,5 +128,5 @@ affinity: {}
 postgresql:
   auth:
     password: "9ZuzN0KZHl"
-    username: "keycloak"
-    database: "settings-postgresql"
+    username: "keycloak1"
+  fullnameOverride: "settings-db"

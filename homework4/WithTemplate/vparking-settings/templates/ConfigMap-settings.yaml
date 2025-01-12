@@ -5,5 +5,5 @@ metadata:
 data:
   hello-world: "hello"
   db-username: "{{.Values.postgresql.auth.username}}"
-  db-server: "{{.Values.postgresql.auth.database}}"
+  db-server: "{{.Values.postgresql.fullnameOverride}}"
   
