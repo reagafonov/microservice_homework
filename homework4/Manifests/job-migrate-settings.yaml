@@ -12,9 +12,9 @@ spec:
           env:
             - name: "PG_CONNECTION_SERVER"
               valueFrom:
-                secretKeyRef:
-                  name: settings-secret
-                  key: database-server-name
+                configMapKeyRef:
+                  key: db-name
+                  name: config-map-settings
             - name: "PG_CONNECTION_PASSWORD"
               valueFrom:
                 secretKeyRef:
@@ -22,8 +22,8 @@ spec:
                   name: settings-secret
             - name: "PG_CONNECTION_USER"
               valueFrom:
-                secretKeyRef:
-                  key: database-user-name
-                  name: settings-secret
+                configMapKeyRef:
+                  key: username
+                  name: config-map-settings
       
       restartPolicy: Never

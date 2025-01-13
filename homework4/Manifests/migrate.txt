@@ -1,1 +1,1 @@
-kubectl apply -f secrets-settings.yaml -f job-migrate-settings.yaml
+kubectl apply -f ConfigMap-settings.yaml -f secrets-settings.yaml -f job-migrate-settings.yaml

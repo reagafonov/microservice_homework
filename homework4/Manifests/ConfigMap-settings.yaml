@@ -3,5 +3,6 @@ kind: ConfigMap
 metadata:
   name: config-map-settings
 data:
-  hello-world: "hello"
   swagger-prefix: "/settings"
+  username: "keycloak"
+  db-name: "keycloak-db-postgresql.keycloak.svc.cluster.local"
