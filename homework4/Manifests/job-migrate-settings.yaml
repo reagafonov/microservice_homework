@@ -7,7 +7,7 @@ spec:
     spec:
       containers:
         - name: settings-migrate
-          image: reagafonov/vparking-settings-arm64:v20
+          image: reagafonov/vparking-settings-arm64:v22
           command: ["/bin/bash","-c","dotnet tool install --global dotnet-ef --version 8.0.10 && export PATH=\"$PATH:/root/.dotnet/tools\" && dotnet ef database update --project /src/Infrastructure/Infrastructure.EntityFramework --startup-project /src/VParkingSettings/"]
           env:
             - name: "PG_CONNECTION_SERVER"

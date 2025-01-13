@@ -4,3 +4,4 @@ metadata:
   name: config-map-settings
 data:
   hello-world: "hello"
+  swagger-prefix: "/settings"

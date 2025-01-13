@@ -14,7 +14,7 @@ spec:
        spec:
           containers:
           - name: settings
-            image: reagafonov/vparking-settings-arm64:v20
+            image: reagafonov/vparking-settings-arm64:v22
 
             ports:
               - containerPort: 8080
@@ -34,5 +34,10 @@ spec:
                   secretKeyRef:
                     key: database-user-name
                     name: settings-secret
+              - name: "SWAGGER_PREFIX"
+                valueFrom:
+                  configMapKeyRef:
+                    key: swagger-prefix
+                    name: config-map-settings
            
           
