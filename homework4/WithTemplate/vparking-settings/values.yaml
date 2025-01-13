@@ -68,7 +68,8 @@ ingress:
   hosts:
     - host: arch.homework
       paths:
-        - path: /settings/(.*)
+        - pathRegexSuffix: /(.*)
+          pathPrefix: /settings
           pathType: Prefix
   tls: []
   #  - secretName: chart-example-tls
@@ -129,4 +130,4 @@ postgresql:
   auth:
     password: "9ZuzN0KZHl"
     username: "keycloak1"
-  fullnameOverride: "settings-db"
+  fullnameOverride: "db"

@@ -2,7 +2,7 @@
 {{- if .Values.ingress.enabled }}
 {{- range $host := .Values.ingress.hosts }}
   {{- range .paths }}
-  http{{ if $.Values.ingress.tls }}s{{ end }}://{{ $host.host }}{{ .path }}
+  http{{ if $.Values.ingress.tls }}s{{ end }}://{{ $host.host }}{{ .pathPrefix }}
   {{- end }}
 {{- end }}
 {{- else if contains "NodePort" .Values.service.type }}
@@ -20,3 +20,7 @@
   echo "Visit http://127.0.0.1:8080 to use your application"
   kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME 8080:$CONTAINER_PORT
 {{- end }}
+
+NOTE: It may take a few minutes for migration job to be complete.
+           You can watch its status by running 'kubectl get --namespace {{ .Release.Namespace }} job -w {{ include "vparking-settings.fullname" . }}'
+
