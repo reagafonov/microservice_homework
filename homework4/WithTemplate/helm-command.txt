@@ -1,1 +1,2 @@
+Например:
 helm install settings ./vparking-settings --namespace keycloak --create-namespace
