@@ -56,6 +56,11 @@ spec:
                 configMapKeyRef:
                   key: db-username
                   name: config-map-settings
+            - name: "SWAGGER_PREFIX"
+              valueFrom:
+                configMapKeyRef:
+                  key: swagger-prefix
+                  name: config-map-settings
           livenessProbe:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
           readinessProbe:
