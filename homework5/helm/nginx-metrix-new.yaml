@@ -1,0 +1,17 @@
+controller:
+  kind: DaemonSet
+  labels:
+    { release: "monitoring" }
+  reportNodeInternalIp: true
+  hostPort:
+    enabled: true
+    ports:
+      http: 80
+      https: 443
+  service:
+    type: NodePort
+  metrics:
+    serviceMonitor:
+      additionalLabels:
+        { release: "monitoring" }
+          

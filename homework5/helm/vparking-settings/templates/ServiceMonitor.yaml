@@ -1,0 +1,29 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "vparking-settings.fullname" . }}-metrics
+  labels:
+    release: {{.Values.prometheus.release}}
+    app: {{ include "vparking-settings.fullname" . }}
+     {{- include "vparking-settings.labels" . | nindent 4 }}
+{{/*  namespace: {{.Values.prometheus.namespace}}*/}}
+  namespace: {{.Release.Namespace}}
+spec: 
+  endpoints:
+    {{- range $host := .Values.ingress.hosts }}
+      {{- range $host.paths }}
+    - port: http
+      scheme: http
+      path: /metrics
+      interval: 6s
+      {{- end}}
+    {{- end}}
+  selector:
+      matchLabels:
+        app: {{ include "vparking-settings.fullname" . }}
+        release: {{.Values.prometheus.release}}
+  namespaceSelector:
+    matchNames:
+      - {{.Release.Namespace}}
+            
+    
