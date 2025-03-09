@@ -6,12 +6,20 @@
 replicaCount: 3
 
 # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
+commonTag: "v39"
 image:
   repository: reagafonov/vparking-settings-arm64
   # This sets the pull policy for images.
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v33"
+
+update: 
+  repository: "reagafonov/vparking-settings-arm64-update"
+  # This sets the pull policy for images.
+  pullPolicy: IfNotPresent
+  annotations: {
+      helm.sh/hook-delete-policy: "before-hook-creation"
+  }
 
 # This is for the secretes for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
@@ -26,14 +34,14 @@ serviceAccount:
   # Automatically mount a ServiceAccount's API credentials?
   automount: true
   # Annotations to add to the service account
-  annotations: {}
+  annotations: { }
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
 # This is for setting Kubernetes Annotations to a Pod.
 # For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
-podAnnotations: {}
+podAnnotations: { }
 # This is for setting Kubernetes Labels to a Pod.
 # For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
 podLabels: {}
@@ -55,6 +63,8 @@ service:
   type: ClusterIP
   # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
   port: 8080
+  annotations: {
+  }
 
 # This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ingress:
@@ -63,7 +73,7 @@ ingress:
   annotations: {
     nginx.ingress.kubernetes.io/rewrite-target: /$1,
     kubernetes.io/ingress.class: nginx,
-    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/use-regex: "true",
   }
     # kubernetes.io/ingress.class: nginx
   # kubernetes.io/tls-acme: "true"
@@ -85,7 +95,7 @@ metricIngress:
   annotations: {
     nginx.ingress.kubernetes.io/rewrite-target: /$1,
     kubernetes.io/ingress.class: nginx,
-    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/use-regex: "true",
   }
   # kubernetes.io/ingress.class: nginx
   # kubernetes.io/tls-acme: "true"
@@ -153,34 +163,17 @@ tolerations: []
 
 affinity: {}
 
+dbAuth:
+  username: "keycloak1"
+  password: 9ZuzN0KZHl
+  postgresPassword: "postgres"
+  server: "db"
 
-postgresql:
-  postgresqlSharedPreloadLibraries: "pgaudit, pg_stat_statements"
-  auth:
-    password: 9ZuzN0KZHl
-    username: "keycloak1"
-  
-  fullnameOverride: "db"
-  #commonLabels: {release: "monitoring"}
-  metrics:
-    enabled: true
-    service:
-      ports: 
-        metrics: 9187
-    serviceMonitor: 
-      enabled: true
-#      interval: 30s
-#      scrapeTimeout: 10s
-#      labels: 
-#        {release: "monitoring"}
-        
-  primary: 
-    extendedConfiguration: |
-      shared_preload_libraries = 'pg_stat_statements'  
-       pg_stat_statements.max = 10000
-       pg_stat_statements.track = all
-        
 prometheus:
-  namespace: "monitoring"
   release: "monitoring"
-  
+
+
+
+    
+        
+

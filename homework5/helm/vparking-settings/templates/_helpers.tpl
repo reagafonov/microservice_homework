@@ -1,3 +1,14 @@
+{{/*Define import tag*/}}
+{{- define "image.tag" -}}
+{{- default .Values.image.tag .Values.commonTag}}
+{{- end}}
+
+
+{{/*Define update tag*/}}
+{{- define "update.tag" -}}
+{{- default .Values.update.tag .Values.commonTag}}
+{{- end}}
+
 {{/*
 Expand the name of the chart.
 */}}

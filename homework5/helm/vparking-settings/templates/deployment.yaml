@@ -2,6 +2,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "vparking-settings.fullname" . }}
+  {{- with .Values.podAnnotations}}
+  annotations:
+    {{- toYaml . | nindent 8 }}
+  {{- end}}
   labels:
     {{- include "vparking-settings.labels" . | nindent 4 }}
 spec:
@@ -13,10 +17,6 @@ spec:
       {{- include "vparking-settings.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
-      annotations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
       labels:
         {{- include "vparking-settings.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
@@ -34,7 +34,7 @@ spec:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.image.repository }}:{{ include "image.tag" . | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
@@ -49,7 +49,7 @@ spec:
             - name: "PG_CONNECTION_PASSWORD"
               valueFrom:
                 secretKeyRef:
-                  key: database-user-password
+                  key: password
                   name: settings-secret
             - name: "PG_CONNECTION_USER"
               valueFrom:

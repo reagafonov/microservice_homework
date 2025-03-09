@@ -2,11 +2,14 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: {{ include "vparking-settings.fullname" . }}-metrics
+  {{- with .Values.podAnnotations}}
+  annotations:
+    {{- toYaml . | nindent 8 }}
+  {{- end}}
   labels:
     release: {{.Values.prometheus.release}}
     app: {{ include "vparking-settings.fullname" . }}
      {{- include "vparking-settings.labels" . | nindent 4 }}
-{{/*  namespace: {{.Values.prometheus.namespace}}*/}}
   namespace: {{.Release.Namespace}}
 spec: 
   endpoints:

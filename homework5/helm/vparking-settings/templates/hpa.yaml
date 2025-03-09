@@ -3,6 +3,10 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ include "vparking-settings.fullname" . }}
+  {{- with .Values.podAnnotations}}
+  annotations:
+    {{- toYaml . | nindent 8 }}
+  {{- end}}
   labels:
     {{- include "vparking-settings.labels" . | nindent 4 }}
 spec:

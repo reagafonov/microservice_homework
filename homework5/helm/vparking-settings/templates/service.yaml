@@ -2,6 +2,10 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "vparking-settings.fullname" . }}
+  {{- with .Values.service.annotations}}
+  annotations:
+    {{- toYaml . | nindent 8 }}
+  {{- end}}
   labels:
     {{- include "vparking-settings.labels" . | nindent 4 }}
     release: {{.Values.prometheus.release}}
