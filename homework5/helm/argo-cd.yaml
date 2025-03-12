@@ -1,0 +1,15 @@
+project: default
+source:
+  repoURL: 'https://github.com/reagafonov/microservice_homework.git'
+  path: homework5/helm/kube-prometheus-stack
+  targetRevision: main
+destination:
+  server: 'https://kubernetes.default.svc'
+  namespace: monitoring
+syncPolicy:
+  automated:
+    prune: true
+    selfHeal: true
+  syncOptions:
+    - CreateNamespace=true
+    - ServerSideApply=true

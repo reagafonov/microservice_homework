@@ -1,0 +1,20 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: settings-vparking-settings-metrics
+  labels:
+    helm.sh/chart: vparking-settings-0.1.0
+    app.kubernetes.io/name: vparking-settings
+    app.kubernetes.io/instance: settings
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+  namespace: keycloak
+spec:
+  endpoints:
+    - port: http
+      scheme: http
+      path: /settings/metrics
+      interval: 60s
+  selector:
+    matchLabels:
+      app: settings-vparking-settings
