@@ -1,14 +1,8 @@
-cd helm
-helm upgrade --install  monitoring ./kube-prometheus-stack -n monitoring
-cd ..
-helm upgrade --install nginx ingress-nginx/ingress-nginx --set controller.metrics.enabled=true 
---set controller.metrics.serviceMonitor.enabled=true --namespace nginx-ingress --create-namespace -f helm/nginx-metrix-new.yaml
-cd helm
-helm install settings ./vparking-settings --namespace keycloak --create-namespace --wait-for-jobs --wait --timeout 10m  
+helm.sh
 minikube service monitoring-grafana -n monitoring
 user admin
 password prom-operator
-import json2.txt
+import graphana.json
 
 метрики postgres
 minikube service db-metrics -n keycloak

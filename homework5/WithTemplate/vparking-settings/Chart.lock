@@ -1,9 +1,0 @@
-dependencies:
-- name: postgresql
-  repository: https://charts.bitnami.com/bitnami
-  version: 16.3.5
-- name: prometheus
-  repository: https://prometheus-community.github.io/helm-charts
-  version: 26.1.0
-digest: sha256:ee3b32d679aadd1433dad6271200bad76c27f6c2155a6b54ba22afc5825677f6
-generated: "2025-01-16T18:51:07.283643+03:00"

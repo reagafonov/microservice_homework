@@ -1,3 +1,0 @@
-kubectl patch customresourcedefinitions transportservers.k8s.nginx.org --subresource='status' --type='merge' -p '{"status":{"storedVersions": ["v1"]}}'
-kubectl patch customresourcedefinitions globalconfigurations.k8s.nginx.org --subresource='status' --type='merge' -p '{"status":{"storedVersions": ["v1"]}}'
-kubectl apply -f nginx-ingress/crds/
