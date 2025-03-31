@@ -75,13 +75,14 @@ ingress:
     nginx.ingress.kubernetes.io/rewrite-target: /$1,
     kubernetes.io/ingress.class: nginx,
     nginx.ingress.kubernetes.io/use-regex: "true",
-    nginx.ingress.kubernetes.io/auth-url: "httpsh://nginx-keycloak.kube-system.svc.cluster.local/oauth2/auth",
-   
+    nginx.ingress.kubernetes.io/auth-url: "https://nginx-keycloak.kube-system.svc.cluster.local/oauth2/auth",
+    nginx.ingress.kubernetes.io/auth-signin: "https://nginx-keycloak.kube-system.svc.cluster.local/oauth2/start?rd=$escaped_request_uri"
+
   }
     # kubernetes.io/ingress.class: nginx
   # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: arch.homework
+    - host: nginx-keycloak.kube-system.svc.cluster.local
       paths:
         - pathRegexSuffix: /(.*)
           pathPrefix: /settings
