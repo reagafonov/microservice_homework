@@ -3,8 +3,9 @@ templates:
   - controller-hpa.yaml
 
 tests:
-  - it: should create an HPA if `controller.autoscaling.enabled` is true
+  - it: should create a HPA if `controller.kind` is "Deployment" and `controller.autoscaling.enabled` is true
     set:
+      controller.kind: Deployment
       controller.autoscaling.enabled: true
     asserts:
       - hasDocuments:
@@ -14,18 +15,3 @@ tests:
       - equal:
           path: metadata.name
           value: RELEASE-NAME-ingress-nginx-controller
-
-  - it: should not create an HPA if `controller.autoscaling.enabled` is true and `controller.keda.enabled` is true
-    set:
-      controller.autoscaling.enabled: true
-      controller.keda.enabled: true
-    asserts:
-      - hasDocuments:
-          count: 0
-
-  - it: should not create an HPA if `controller.kind` is "DaemonSet"
-    set:
-      controller.kind: DaemonSet
-    asserts:
-      - hasDocuments:
-          count: 0

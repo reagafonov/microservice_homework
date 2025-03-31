@@ -13,9 +13,7 @@ metadata:
   name: {{ include "ingress-nginx.controller.fullname" . }}
   namespace: {{ include "ingress-nginx.namespace" . }}
 data:
-{{- if .Values.controller.allowSnippetAnnotations }}
-  allow-snippet-annotations: "true"
-{{- end }}
+  allow-snippet-annotations: "{{ .Values.controller.allowSnippetAnnotations }}"
 {{- if .Values.controller.addHeaders }}
   add-headers: {{ include "ingress-nginx.namespace" . }}/{{ include "ingress-nginx.fullname" . }}-custom-add-headers
 {{- end }}
@@ -26,5 +24,5 @@ data:
   ssl-dh-param: {{ include "ingress-nginx.namespace" . }}/{{ include "ingress-nginx.controller.fullname" . }}
 {{- end }}
 {{- range $key, $value := .Values.controller.config }}
-  {{- $key | nindent 2 }}: {{ tpl (toString $value) $ | quote }}
+  {{- $key | nindent 2 }}: {{ $value | quote }}
 {{- end }}

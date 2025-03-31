@@ -25,8 +25,8 @@ spec:
       containers:
       - args:
         - --provider=keycloak-oidc
-        - --redirect-url=https://arch.homework/oauth2/callback
-        - --oidc-issuer-url=http://arch.homework/realms/vparking      
+        - --redirect-url=https://nginx-keycloak.kube-system.svc.cluster.local/oauth2/callback
+        - --oidc-issuer-url=http://nginx-keycloak.kube-system.svc.cluster.local/realms/vparking      
         - --email-domain=*
         - --upstream=file:///dev/null
         - --http-address=0.0.0.0:4180
@@ -41,7 +41,7 @@ spec:
         - name: OAUTH2_PROXY_CLIENT_ID
           value: vparking
         - name: OAUTH2_PROXY_CLIENT_SECRET
-          value: ap0C3RjBesn19VNzKMRs8FvoV6g0F3Px
+          value: 9lrkn7w31TQQePckKvVo2C5N4TFlmvXx
         - name: OAUTH2_PROXY_COOKIE_SECRET
           value: ctqULBPoIvY1YuxAuUJGDg==
         image: quay.io/oauth2-proxy/oauth2-proxy@sha256:e01ded8323cc577440be301d8673cdd515367b8d9afe9eb23f61016a8c3e5f4e

@@ -16,6 +16,16 @@ spec:
             name: oauth2-proxy
             port:
               number: 4180
+  - host: nginx-keycloak.kube-system.svc.cluster.local
+    http:
+      paths:
+        - path: /oauth2
+          pathType: Prefix
+          backend:
+            service:
+              name: oauth2-proxy
+              port:
+                number: 4180
   tls:
     - hosts:
         - arch.homework

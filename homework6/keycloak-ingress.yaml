@@ -48,3 +48,41 @@ spec:
                 name: nginx-keycloak
                 port:
                   number: 80
+    - host: nginx-keycloak.kube-system.svc.cluster.local
+      http:
+        paths:
+          - path: /admin
+            pathType: Prefix
+            backend:
+              service:
+                name: nginx-keycloak
+                port:
+                  number: 80
+          - path: /realms/
+            pathType: Prefix
+            backend:
+              service:
+                name: nginx-keycloak
+                port:
+                  number: 80
+          - path: /resources/
+            pathType: Prefix
+            backend:
+              service:
+                name: nginx-keycloak
+                port:
+                  number: 80
+          - path: /robots.txt
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: nginx-keycloak
+                port:
+                  number: 80
+          - path: /js/
+            pathType: Prefix
+            backend:
+              service:
+                name: nginx-keycloak
+                port:
+                  number: 80
