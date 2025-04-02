@@ -31,12 +31,12 @@ controller:
     ## Keep false as default for now!
     chroot: false
     # registry: registry.k8s.io
-    image: ingress-nginx/controller
+    image: cr.yandex/crpo2q44fm7kalr36b4h/ingress-nginx
     ## for backwards compatibility consider setting the full image url via the repository value below
     ## use *either* current default registry/image or repository format or installing chart by providing the values.yaml will fail
     ## repository:
     tag: "v1.12.0"
-    digest: sha256:e6b8de175acda6ca913891f0f727bca4527e797d52688cbe9fec9040d6f6b6fa
+    digest: sha256:fe4197a9595375761aaf54853f1cd8cf9591f7f18fe0c825458efca6017a66e3
     digestChroot: sha256:87c88e1c38a6c8d4483c8f70b69e2cca49853bb3ec3124b9b1be648edf139af3
     pullPolicy: IfNotPresent
     runAsNonRoot: true

@@ -23,7 +23,7 @@ global:
   ##
   security:
     ## @param global.security.allowInsecureImages Allows skipping image verification
-    allowInsecureImages: false
+    allowInsecureImages: true
   postgresql:
     ## @param global.postgresql.auth.postgresPassword Password for the "postgres" admin user (overrides `auth.postgresPassword`)
     ## @param global.postgresql.auth.username Name for a custom user to create (overrides `auth.username`)
@@ -116,8 +116,8 @@ diagnosticMode:
 ## @param image.debug Specify if debug values should be set
 ##
 image:
-  registry: docker.io
-  repository: cr.yandex/crpo2q44fm7kalr36b4h/postgresql
+  registry: cr.yandex/crpo2q44fm7kalr36b4h
+  repository: postgresql
   tag: 17.4.0-debian-12-r4
   digest: ""
   ## Specify a imagePullPolicy

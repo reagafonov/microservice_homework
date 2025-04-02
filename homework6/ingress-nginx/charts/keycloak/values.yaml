@@ -25,7 +25,7 @@ global:
   ##
   security:
     ## @param global.security.allowInsecureImages Allows skipping image verification
-    allowInsecureImages: false
+    allowInsecureImages: true
   ## Compatibility adaptations for Kubernetes platforms
   ##
   compatibility:
@@ -106,8 +106,8 @@ diagnosticMode:
 ## @param image.debug Specify if debug logs should be enabled
 ##
 image:
-  registry: docker.io
-  repository: cr.yandex/crpo2q44fm7kalr36b4h/keycloak
+  registry: cr.yandex/crpo2q44fm7kalr36b4h
+  repository: keycloak
   tag: 26.1.4-debian-12-r0
   digest: ""
   ## Specify a imagePullPolicy
