@@ -165,12 +165,6 @@ spec:
               mountPath: /usr/local/certificates/
               readOnly: true
           {{- end }}
-          {{- if .Values.oidc.enabled }}
-            - name: oidc-volume
-              mountPath: /etc/nginx/oidc/oidc.conf
-              subPath: oidc.conf
-              readOnly: true
-          {{- end }}
           {{- if .Values.controller.extraVolumeMounts }}
             {{- toYaml .Values.controller.extraVolumeMounts | nindent 12 }}
           {{- end }}
@@ -241,11 +235,6 @@ spec:
               - key: tls.key
                 path: key
         {{- end }}
-      {{- end }}
-      {{- if .Values.oidc.enabled }}
-        - name: oidc-volume
-          configMap:
-            name: oidc-config-map
       {{- end }}
       {{- if .Values.controller.extraVolumes }}
         {{ toYaml .Values.controller.extraVolumes | nindent 8 }}

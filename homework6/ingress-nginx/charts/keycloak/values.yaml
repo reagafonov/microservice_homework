@@ -107,7 +107,7 @@ diagnosticMode:
 ##
 image:
   registry: docker.io
-  repository: bitnami/keycloak
+  repository: cr.yandex/crpo2q44fm7kalr36b4h/keycloak
   tag: 26.1.4-debian-12-r0
   digest: ""
   ## Specify a imagePullPolicy

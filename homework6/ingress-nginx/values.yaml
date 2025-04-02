@@ -14,9 +14,6 @@ commonLabels: {}
 # scmhash: abc123
 # myLabel: aakkmd
 
-#Enables oidc authentification
-oidc:
-    enabled: true
 
 controller:
     name: controller
@@ -636,12 +633,19 @@ controller:
     #      mountPath: /srv/var/lib/lemonldap-ng/portal/skins
 
     # -- Additional volumeMounts to the controller main container.
-    extraVolumeMounts: []
+    extraVolumeMounts:
+          - name: oidc-volume
+            mountPath: /etc/nginx/oidc/oidc.conf
+            subPath: oidc.conf
+            readOnly: true
     #  - name: copy-portal-skins
     #   mountPath: /var/lib/lemonldap-ng/portal/skins
 
     # -- Additional volumes to the controller pod.
-    extraVolumes: []
+    extraVolumes:
+        - name: oidc-volume
+          configMap:
+              name: oidc-config-map
     #  - name: copy-portal-skins
     #    emptyDir: {}
 
