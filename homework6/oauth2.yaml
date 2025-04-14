@@ -1,0 +1,13 @@
+config:
+  clientID: "vparking"
+  clientSecret: "8o3t0mgzGvNzk6ctBvNfhIlU0EGbcaRH"
+  cookieSecret: "ctqULBPoIvY1YuxAuUJGDg=="
+#ingress:
+#  enabled: true
+#  tls:
+#    - hosts:
+#        - arch.homework
+#      secretName: nginx-ingress-nginx-admission
+  
+    
+  
