@@ -9,11 +9,11 @@ metadata:
      app.kubernetes.io/version: 26.1.4    
      k8s-app: oauth2-proxy
   name: oauth2-proxy
-  namespace: kube-system
+  namespace: oauth2-proxy
 spec:
   ports:
   - name: http
-    port: 4180
+    port: 80
     protocol: TCP
     targetPort: 4180
   selector:

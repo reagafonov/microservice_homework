@@ -3,7 +3,7 @@ kind: Ingress
 metadata:
 
   name: external-auth-oauth2
-  namespace: kube-system
+  namespace: oauth2-proxy
 spec:
   ingressClassName: nginx
   rules:

@@ -11,7 +11,7 @@ metadata:
        app.kubernetes.io/version: 26.1.4                                                                                                                                                                                                           
                                                                                                                                                                                                  
   name: oauth2-proxy
-  namespace: kube-system
+  namespace: oauth2-proxy
 spec:
   replicas: 1
   selector:
@@ -25,29 +25,45 @@ spec:
       containers:
       - args:
         - --provider=keycloak-oidc
-        - --redirect-url=https://nginx-keycloak.kube-system.svc.cluster.local/oauth2/callback
-        - --oidc-issuer-url=http://nginx-keycloak.kube-system.svc.cluster.local/realms/vparking      
+        - --client-id=vparking
+        - --client-secret=MFnfmrz49a5NmxXcpZwF9MavW5yPEPW7
+        #- --redirect-url=https://oauth2-proxy.oauth2-proxy.svc.cluster.local/oauth2/callback
+        - --redirect-url=https://arch.homework/oauth2/callback
+        - --oidc-issuer-url=https://keycloak.keycloak.svc.cluster.local/realms/vparking
+        - --backend-logout-url=https://keycloak.keycloak.svc.cluster.local/realms/vparking//protocol/openid-connect/logout?id_token_hint={id_token}
         - --email-domain=*
-        - --upstream=file:///dev/null
+        #- --code-challenge-method=S256
+        - --cookie-secret=ctqULBPoIvY1YuxAuUJGDg==
+          #- --upstream=file:///dev/null
         - --http-address=0.0.0.0:4180
         - --ssl-insecure-skip-verify=true
-       
+
         - --silence-ping-logging=true
         - --reverse-proxy=true
-        - --cookie-domain=arch.homework
+        #- --cookie-domain=.homework,.cluster.local
+        #-  --cookie-refresh=0
         - --set-xauthrequest=true
         - --set-authorization-header=true
-        env:
-        - name: OAUTH2_PROXY_CLIENT_ID
-          value: vparking
-        - name: OAUTH2_PROXY_CLIENT_SECRET
-          value: 9pDuhyYBFJ2kpaUK3fRTrwdUXqRWgJnuJ
-        - name: OAUTH2_PROXY_COOKIE_SECRET
-          value: ctqULBPoIvY1YuxAuUJGDg==
-        image: cr.yandex/crpo2q44fm7kalr36b4h/oauth2-proxy@sha256:3b5a141880229d1abd38178f2b221bc813a740067bf830030a90ae6d37f51a1f
+        - --whitelist-domain=arch.homework,oauth2-proxy.oauth2-proxy.svc.cluster.local
+#        env:
+#        - name: OAUTH2_PROXY_CLIENT_ID
+#          value: vparking
+#        - name: OAUTH2_PROXY_CLIENT_SECRET
+#          value: 9lrkn7w31TQQePckKvVo2C5N4TFlmvXx
+#        - name: OAUTH2_PROXY_COOKIE_SECRET
+#          value: ctqULBPoIvY1YuxAuUJGDg==
+        image: quay.io/oauth2-proxy/oauth2-proxy@sha256:e01ded8323cc577440be301d8673cdd515367b8d9afe9eb23f61016a8c3e5f4e
         imagePullPolicy: Always
         name: oauth2-proxy
         ports:
         - containerPort: 4180
           protocol: TCP
-
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            port: http
+            path: /ping
+            scheme: HTTP
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
