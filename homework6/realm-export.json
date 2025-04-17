@@ -1,0 +1,52 @@
+{
+  "realm": "vparking",
+  "enabled": true,
+  "registrationAllowed": true,
+  "rememberMe": true,
+  "resetPasswordAllowed": true,
+  "clients": [
+    {
+      "clientId": "vparking",
+      "enabled": true,
+      "redirectUris": [
+        "https://arch.homework/oauth2/callback"
+      ],
+      "webOrigins": [
+        "https://arch.homework"
+      ],
+      "directAccessGrantsEnabled": false,
+      "publicClient": false,
+      "protocolMappers": [
+        {
+          "id": "991f2541-b480-407f-8da8-85cdb0ce3621",
+          "name": "aud-vparking-mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "vparking",
+            "id.token.claim": "true",
+            "lightweight.claim": "false",
+            "access.token.claim": "true",
+            "introspection.token.claim": "true"
+          }
+        }
+      ],
+      "defaultClientScopes": [
+      ],
+      "optionalClientScopes": [
+        "web-origins",
+        "roles",
+        "acr",
+        "address",
+        "phone",
+        "offline_access",
+        "profile",
+        "organization",
+        "microprofile-jwt",
+        "basic",
+        "email"
+      ]
+    }
+  ]
+}
