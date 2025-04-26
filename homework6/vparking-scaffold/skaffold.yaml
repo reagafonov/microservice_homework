@@ -1,0 +1,39 @@
+apiVersion: skaffold/v4beta12
+kind: Config
+metadata:
+  name: vparking-scaffold
+build:
+  artifacts:
+    - image: vparking-users
+      context: vparking/src
+      docker:
+        dockerfile: Dockerfile
+deploy:
+  helm:
+    releases:
+      - name: ingress-nginx
+        chartPath: api-gateway/ingress-nginx
+        skipBuildDependencies: true
+        valuesFiles:
+          - api-gateway/ingress-nginx/values.yaml
+        version: 4.12.1
+      - name: keycloak
+        chartPath: api-gateway/keycloak
+        skipBuildDependencies: true
+        valuesFiles:
+          - api-gateway/keycloak/values.yaml
+          - api-gateway/keycloak-values.yaml
+        version: 24.4.13
+        
+      - name: vparking-settings
+        chartPath: vparking/vparking-users
+        skipBuildDependencies: true
+        valuesFiles:
+          - vparking/vparking-users/values.yaml
+        version: 0.1.0
+portForward:
+  - resourceType: Service
+    resourceName: vparking-settings
+    namespace: default
+    port: 22
+    localPort: 5022   

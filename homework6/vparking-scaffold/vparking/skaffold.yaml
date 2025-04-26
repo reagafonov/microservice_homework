@@ -1,0 +1,18 @@
+apiVersion: skaffold/v4beta12
+kind: Config
+metadata:
+  name: vparking
+build:
+  artifacts:
+    - image: vparking-users
+      context: src
+      docker:
+        dockerfile: Dockerfile
+deploy:
+  helm:
+    releases:
+      - name: vparking-users
+        chartPath: vparking-users
+        valuesFiles:
+          - vparking-users/values.yaml
+        version: 0.1.0

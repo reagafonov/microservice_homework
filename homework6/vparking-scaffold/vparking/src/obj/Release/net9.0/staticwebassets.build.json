@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "ogeJLtQrydmUcyCqolrd7iMwR4YcTFBMKlsDhJqpObc=",
+  "Source": "keycloak_userEditor",
+  "BasePath": "_content/keycloak_userEditor",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}

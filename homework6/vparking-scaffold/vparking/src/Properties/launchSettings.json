@@ -1,0 +1,29 @@
+﻿{
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "http": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "applicationUrl": "http://localhost:5045",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "KEYCLOAK:CLIENT_ID": "admin-cli",
+        "KEYCLOAK:ClientSecret": "1Q1TIrGZCRl1HTCVlqDBSDKDzQgpToT1",
+        "KEYCLOAK:URL": "http://localhost",
+        "KEYCLOAK:USER_NAME": "user",
+        "KEYCLOAK:USER_PASSWORD": "bitnami",
+        "KEYCLOAK:REALM": "vparking"
+      }
+    },
+    "https": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "applicationUrl": "https://localhost:7009;http://localhost:5045",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
