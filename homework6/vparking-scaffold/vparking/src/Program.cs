@@ -4,10 +4,13 @@ using Flurl.Http;
 using keycloak_userEditor;
 using Keycloak.Net;
 using Keycloak.Net.Models.Users;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+
 
 var builder = WebApplication.CreateBuilder(args);
-var keycloakSection = builder.Configuration.GetSection("KEYCLOAK");
+var keycloakSection = builder.Configuration;
 var url = keycloakSection.GetValue<string>("URL");
 var userName = keycloakSection.GetValue<string>("USER_NAME");
 var password = keycloakSection.GetValue<string>("USER_PASSWORD");
@@ -22,8 +25,8 @@ Debug.Assert(realmName != null, nameof(realmName) + " != null");
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-builder.Services.AddHealthChecks();//.AddCheck<RequestTimeHealthCheck>("RequestTimeCheck");;
-builder.Services.AddTransient<KeycloakClient>(_=> new KeycloakClient(
+builder.Services.AddHealthChecks(); //.AddCheck<RequestTimeHealthCheck>("RequestTimeCheck");;
+builder.Services.AddTransient(_ => new KeycloakClient(
     url,
     userName,
     password,
@@ -32,7 +35,6 @@ builder.Services.AddTransient<KeycloakClient>(_=> new KeycloakClient(
 
 // builder.Services.AddKeycloakWebApiAuthentication(builder.Configuration);
 // builder.Services.AddAuthorization();
-
 
 
 builder.Services.AddAutoMapper(typeof(UserInfo).Assembly);
@@ -49,12 +51,10 @@ if (app.Environment.IsDevelopment())
 // app.UseAuthentication();
 // app.UseAuthorization();
 
-app.MapPost("/login", () =>
-{
+app.MapPost("/login", () => { });
 
-});
-
-app.MapGet("/users/{id}", async ( HttpContext _, [FromRoute]string id, KeycloakClient adminApi, IMapper mapper,ILogger<WebApplication> logger, CancellationToken token) =>
+app.MapGet("/users/{id}", async (HttpContext _, [FromRoute] string id, KeycloakClient adminApi, IMapper mapper,
+    ILogger<WebApplication> logger, CancellationToken token) =>
 {
     User saveUser;
     try
@@ -68,22 +68,24 @@ app.MapGet("/users/{id}", async ( HttpContext _, [FromRoute]string id, KeycloakC
             return Results.StatusCode(e.StatusCode.Value);
         return Results.InternalServerError();
     }
-    
+
     // if (user.Identity?.Name != result.UserName)
     //     return Results.Unauthorized();
     var result = mapper.Map<UserResult>(saveUser);
     return result != null ? Results.Ok(result) : Results.NotFound();
 });
 
-app.MapPost("/users/add", async ([FromBody]UserInfo userInfo, KeycloakClient adminApi, IMapper mapper, ILogger<WebApplication> log, CancellationToken token) =>
+app.MapPost("/users/add", async ([FromBody] UserInfo userInfo, KeycloakClient adminApi, IMapper mapper,
+    ILogger<WebApplication> log, CancellationToken token) =>
 {
     try
     {
         var userRepresentation = mapper.Map<User>(userInfo);
         userRepresentation.EmailVerified = true;
         userRepresentation.Enabled = true;
-        await adminApi.CreateUserAsync(realmName,userRepresentation, token);
-        var resultUser = await adminApi.GetUsersAsync(realmName, username: userRepresentation.UserName, cancellationToken:token);
+        await adminApi.CreateUserAsync(realmName, userRepresentation, token);
+        var resultUser =
+            await adminApi.GetUsersAsync(realmName, username: userRepresentation.UserName, cancellationToken: token);
         var singleOrDefault = resultUser.SingleOrDefault();
         var userId = singleOrDefault?.Id;
         if (userId == null)
@@ -94,22 +96,22 @@ app.MapPost("/users/add", async ([FromBody]UserInfo userInfo, KeycloakClient adm
         }
         catch (Exception e)
         {
-            await adminApi.DeleteUserAsync(realmName, userId, cancellationToken:token);
+            await adminApi.DeleteUserAsync(realmName, userId, cancellationToken: token);
             return Results.BadRequest(e.Message);
         }
-        userRepresentation.Id = userId;
-        return Results.Ok(mapper.Map<UserResult>(userRepresentation));
+
+        var user = await adminApi.GetUserAsync(realmName, userId, cancellationToken: token);
+        return Results.Ok(mapper.Map<UserResult>(user));
     }
     catch (Exception e)
     {
         log.LogError(e, e.Message);
         return Results.InternalServerError();
     }
-  
-    
 });
 
-app.MapPut("/users/{id}", async ( HttpContext _,[FromRoute]string id, [FromBody]UserUpdate userInfo, KeycloakClient adminApi, IMapper mapper, ILogger<WebApplication> logger, CancellationToken token) =>
+app.MapPut("/users/{id}", async (HttpContext _, [FromRoute] string id, [FromBody] UserUpdate userInfo,
+    KeycloakClient adminApi, IMapper mapper, ILogger<WebApplication> logger, CancellationToken token) =>
 {
     try
     {
@@ -119,7 +121,7 @@ app.MapPut("/users/{id}", async ( HttpContext _,[FromRoute]string id, [FromBody]
         try
         {
             userRepresentation.Id = id;
-            await adminApi.UpdateUserAsync(realmName,id,userRepresentation, token);
+            await adminApi.UpdateUserAsync(realmName, id, userRepresentation, token);
             return Results.Ok(mapper.Map<UserResult>(userRepresentation));
         }
         catch (Exception e)
@@ -127,27 +129,45 @@ app.MapPut("/users/{id}", async ( HttpContext _,[FromRoute]string id, [FromBody]
             logger.LogError(e, e.Message);
             return Results.InternalServerError();
         }
-        
     }
     catch (Exception e)
     {
-        logger.LogError(e,e.Message);
+        logger.LogError(e, e.Message);
         return Results.InternalServerError();
     }
-   
 });
 
-app.MapDelete("/users/{id}", async (HttpContext _, [FromRoute]string id, KeycloakClient adminApi, CancellationToken token) =>
+app.MapDelete("/users/{id}",
+    async (HttpContext _, [FromRoute] string id, KeycloakClient adminApi, CancellationToken token) =>
+    {
+        // var result = await adminApi.GetUserAsync(realmName, id);
+        // if (result == null)
+        //     return Results.NotFound();
+        // if (user.Identity?.Name != result.UserName)
+        //     return Results.Unauthorized();
+        await adminApi.DeleteUserAsync(realmName, id, token);
+        return Results.Ok();
+    });
+
+app.UseHealthChecks("/users/health", new HealthCheckOptions
 {
-    // var result = await adminApi.GetUserAsync(realmName, id);
-    // if (result == null)
-    //     return Results.NotFound();
-    // if (user.Identity?.Name != result.UserName)
-    //     return Results.Unauthorized();
-    await adminApi.DeleteUserAsync(realmName,id, token);
-    return Results.Ok();
+    ResponseWriter = async (context, report) =>
+    {
+        switch (report.Status)
+        {
+            case HealthStatus.Unhealthy:
+                await context.Response.WriteAsync("{Status: Unhealthy}");
+                break;
+            case HealthStatus.Degraded:
+                await context.Response.WriteAsync("{Status: Degraded}");
+                break;
+            case HealthStatus.Healthy:
+                await context.Response.WriteAsync("{Status: OK}");
+                break;
+            default:
+                await context.Response.WriteAsync("Error");
+                break;
+        }
+    }
 });
-
-app.UseHealthChecks("/health");
 app.Run();
-

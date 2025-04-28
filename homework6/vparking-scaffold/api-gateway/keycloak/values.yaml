@@ -106,8 +106,8 @@ diagnosticMode:
 ## @param image.debug Specify if debug logs should be enabled
 ##
 image:
-  registry: docker.io
-  repository: bitnami/keycloak
+  registry: cr.yandex/crpo2q44fm7kalr36b4h
+  repository: keycloak
   tag: 26.1.4-debian-12-r0
   digest: ""
   ## Specify a imagePullPolicy
@@ -1136,8 +1136,8 @@ keycloakConfigCli:
   ## @param keycloakConfigCli.image.pullSecrets keycloak-config-cli container image pull secrets
   ##
   image:
-    registry: docker.io
-    repository: bitnami/keycloak-config-cli
+    registry: cr.yandex/crpo2q44fm7kalr36b4h
+    repository: keycloak-config-cli
     tag: 6.4.0-debian-12-r0
     digest: ""
     ## Specify a imagePullPolicy
@@ -1358,12 +1358,26 @@ keycloakConfigCli:
                 ]
               }
             ],
+            "components": {
+     
+                 "org.keycloak.userprofile.UserProfileProvider": [
+                  {
+                    "id": "f8bd2a84-e2eb-4227-9e71-7e6d354b888d",
+                    "providerId": "declarative-user-profile",
+                    "subComponents": {},
+                    "config": {
+                      "kc.user.profile.config":["{\"attributes\":[{\"name\":\"username\",\"displayName\":\"${username}\",\"validations\":{\"length\":{\"min\":3,\"max\":255},\"username-prohibited-characters\":{},\"up-username-not-idn-homograph\":{}},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"email\",\"displayName\":\"${email}\",\"validations\":{\"email\":{},\"length\":{\"max\":255}},\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"firstName\",\"displayName\":\"${firstName}\",\"validations\":{\"length\":{\"max\":255},\"person-name-prohibited-characters\":{}},\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"lastName\",\"displayName\":\"${lastName}\",\"validations\":{\"length\":{\"max\":255},\"person-name-prohibited-characters\":{}},\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"AvatarUrl\",\"displayName\":\"AvatarUrl\",\"validations\":{\"uri\":{\"allowFragment\":true,\"requireValidUrl\":true}},\"annotations\":{},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"Age\",\"displayName\":\"Age\",\"validations\":{},\"annotations\":{},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false}],\"groups\":[{\"name\":\"user-metadata\",\"displayHeader\":\"User metadata\",\"displayDescription\":\"Attributes, which refer to user metadata\"}]}"]
+                    }
+                  }
+                 ],
+
+            },
             "internationalizationEnabled": true,
             "supportedLocales": [
-                 "ru"
-             ],
+              "ru"
+            ],
             "defaultLocale": "ru",
-          }
+        }
   
   ## @param keycloakConfigCli.existingConfigmap ConfigMap with keycloak-config-cli configuration
   ## NOTE: This will override keycloakConfigCli.configuration

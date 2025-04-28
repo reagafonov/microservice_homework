@@ -117,7 +117,7 @@ diagnosticMode:
 ##
 image:
   registry: docker.io
-  repository: bitnami/postgresql
+  repository: cr.yandex/crpo2q44fm7kalr36b4h/postgresql
   tag: 17.4.0-debian-12-r4
   digest: ""
   ## Specify a imagePullPolicy
@@ -1589,7 +1589,7 @@ volumePermissions:
   ##
   image:
     registry: docker.io
-    repository: bitnami/os-shell
+    repository: cr.yandex/crpo2q44fm7kalr36b4h/os-shell
     tag: 12-debian-12-r39
     digest: ""
     pullPolicy: IfNotPresent
@@ -1698,7 +1698,7 @@ metrics:
   ##
   image:
     registry: docker.io
-    repository: bitnami/postgres-exporter
+    repository: cr.yandex/crpo2q44fm7kalr36b4h/postgres-exporter
     tag: 0.17.1-debian-12-r0
     digest: ""
     pullPolicy: IfNotPresent

@@ -2,17 +2,27 @@ apiVersion: skaffold/v4beta12
 kind: Config
 metadata:
   name: vparking
+
 build:
   artifacts:
     - image: vparking-users
       context: src
       docker:
         dockerfile: Dockerfile
+        
 deploy:
   helm:
     releases:
-      - name: vparking-users
+      - name: vparking-settings
         chartPath: vparking-users
+        namespace: vparking
+        createNamespace: true
         valuesFiles:
           - vparking-users/values.yaml
         version: 0.1.0
+portForward:
+  - resourceType: Service
+    resourceName: vparking-settings
+    namespace: vparking
+    port: 22
+    localPort: 5022   

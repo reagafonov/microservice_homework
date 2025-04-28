@@ -129,7 +129,7 @@ can supply the files by mounting a volume e.g. with docker compose as follows:
 
 ```yaml
 keycloak:
-  image: bitnami/keycloak:latest
+  image: cr.yandex/crpo2q44fm7kalr36b4h/keycloak:26.1.4-debian-12-r0
   volumes:
     - /local/path/to/realms/folder:/opt/bitnami/keycloak/data/import
 ```
@@ -143,7 +143,7 @@ By using the `kc.sh` script you can export a realm with users. Be sure to mount 
 
 ```yaml
 keycloak:
-  image: bitnami/keycloak:latest
+  image: cr.yandex/crpo2q44fm7kalr36b4h/keycloak:26.1.4-debian-12-r0
   volumes:
     - /local/path/to/export/folder:/export
 ```

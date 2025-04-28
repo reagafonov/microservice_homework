@@ -1,0 +1,1 @@
+FROM  ingress-controller/controller:1.0.0-dev

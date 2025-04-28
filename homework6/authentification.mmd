@@ -1,0 +1,55 @@
+sequenceDiagram 
+    alt Если запущена сессия
+        alt Если залогинен
+            Browser->>+Ingress: "(Запрос api)https://arch.homework/settings/health"
+            Ingress->>+Oauth2Proxy: "(Запрос авторизации) http://oauth2-proxy.oauth2-proxy.svc.cluster.local/oauth2/auth"
+            Oauth2Proxy->>+Keycloak: https://keycloak.keycloak.svc.cluster.local/realms/vparking/...+Token
+            Keycloak->>-Oauth2Proxy: 200 OK + Данные в хедере, указанные в токене
+         Oauth2Proxy->>-Ingress: 200 OK + Данные в хедере, указанные в токене
+         Ingress->>+Api: Запрос + заголовки
+         Api->>-Ingress: Результат
+         Ingress->>-Browser: Результат
+        else
+            Browser->>+Ingress: "(Запрос api)https://arch.homework/settings/health"
+            Ingress->>+Oauth2Proxy: "(Запрос авторизации) http://oauth2-proxy.oauth2-proxy.svc.cluster.local/oauth2/auth"
+            Oauth2Proxy->>+Keycloak: https://keycloak.keycloak.svc.cluster.local/realms/vparking/...+Token
+            Keycloak->>-Oauth2Proxy: 401 Unauthorized
+            Oauth2Proxy->>-Ingress: 401 Unauthorized
+            Ingress->>+Oauth2Proxy: https://$host/oauth2/start?rd=$escaped_request_uri
+            Oauth2Proxy->>+Keycloak: https://keycloak.keycloak.svc.cluster.local/realms/vparking/...+Callback
+            Keycloak->>-Oauth2Proxy: Редирект+2*GUID?+Callback
+            Oauth2Proxy->>-Ingress: Редирект+cookie+2*GUID
+            Ingress->>-Browser:Редирект+cookie+2*GUID
+            Browser->>+Ingress: Редирект+2*Guid?
+            Ingress->>+Keycloak: Редирект+2*Guid?
+            Keycloak->>-Ingress: Страница входа
+            Ingress->>-Browser: Страница входа
+            Browser->>+Ingress: Post запрос с параметрами входа
+            Ingress->>+Keycloak: Post запрос с параметрами входа
+            Keycloak->>-Ingress: Redirect+code
+            Ingress->>-Browser:Redirect+code
+            Browser->>+Ingress: Redirect+code
+            Ingress->>+Oauth2Proxy: Code
+            Oauth2Proxy->>+Keycloak: https://keycloak.keycloak.svc.cluster.local/realms/vparking + callback+ code 
+            Keycloak->>-Oauth2Proxy: token, сессия
+            Oauth2Proxy->>-Ingress: sessionId
+            Ingress->>-Browser: sessionId
+            Browser->>+Ingress: api + sessionID
+            Ingress->>+Oauth2Proxy: "(Запрос авторизации) http://oauth2-proxy.oauth2-proxy.svc.cluster.local/oauth2/auth"
+            Oauth2Proxy->>+Keycloak: https://keycloak.keycloak.svc.cluster.local/realms/vparking/...+Token
+            Keycloak->>-Oauth2Proxy: 200 OK + Данные в хедере, указанные в токене
+            Oauth2Proxy->>-Ingress: 200 OK + Данные в хедере, указанные в токене
+            Ingress->>+Api: Запрос + заголовки
+            Api->>-Ingress: Результат
+            Ingress->>-Browser: Результат
+            end
+            
+    else
+        Browser->>+Ingress: "(Запрос api)https://arch.homework/settings/health"
+        Ingress->>+Oauth2Proxy: "(Запрос авторизации) http://oauth2-proxy.oauth2-proxy.svc.cluster.local/oauth2/auth"
+        Oauth2Proxy->>-Ingress: 401 Unauthorized 
+        end
+        
+    Ingress->>Oauth2Proxy: "https://keycloak.keycloak.svc.cluster.local/realms/vparking"
+    Oauth2Proxy->>+Keycloak: https://keycloak.keycloak.svc.cluster.local/realms/vparking
+    

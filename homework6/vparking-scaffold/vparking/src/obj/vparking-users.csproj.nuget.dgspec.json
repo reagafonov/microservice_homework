@@ -48,10 +48,6 @@
               "target": "Package",
               "version": "[14.0.0, )"
             },
-            "Keycloak.AuthServices.Authentication": {
-              "target": "Package",
-              "version": "[2.6.1, )"
-            },
             "Keycloak.Net.Core": {
               "target": "Package",
               "version": "[1.0.34, )"

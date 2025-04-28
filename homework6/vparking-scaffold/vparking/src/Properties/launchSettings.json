@@ -8,12 +8,11 @@
       "applicationUrl": "http://localhost:5045",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "KEYCLOAK:CLIENT_ID": "admin-cli",
-        "KEYCLOAK:ClientSecret": "1Q1TIrGZCRl1HTCVlqDBSDKDzQgpToT1",
-        "KEYCLOAK:URL": "http://localhost",
-        "KEYCLOAK:USER_NAME": "user",
-        "KEYCLOAK:USER_PASSWORD": "bitnami",
-        "KEYCLOAK:REALM": "vparking"
+        "CLIENT_ID": "admin-cli",
+        "URL": "http://localhost",
+        "USER_NAME": "user",
+        "USER_PASSWORD": "qwerty",
+        "REALM": "vparking"
       }
     },
     "https": {

@@ -2,11 +2,11 @@ annotations:
   category: Database
   images: |
     - name: os-shell
-      image: docker.io/bitnami/os-shell:12-debian-12-r39
+      image: cr.yandex/crpo2q44fm7kalr36b4h/os-shell:12-debian-12-r39   
     - name: postgres-exporter
-      image: docker.io/bitnami/postgres-exporter:0.17.1-debian-12-r0
+      image: cr.yandex/crpo2q44fm7kalr36b4h/postgres-exporter:0.17.1-debian-12-r0
     - name: postgresql
-      image: docker.io/bitnami/postgresql:17.4.0-debian-12-r4
+      image: cr.yandex/crpo2q44fm7kalr36b4h/postgresql:17.4.0-debian-12-r4
   licenses: Apache-2.0
 apiVersion: v2
 appVersion: 17.4.0

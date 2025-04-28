@@ -1,0 +1,22 @@
+apiVersion: skaffold/v4beta12
+kind: Config
+metadata:
+  name: vparking
+build:
+  artifacts:
+    - image: vparking-users
+      context: vparking
+      docker:
+        dockerfile: src/Dockerfile
+deploy:
+  helm:
+    releases:
+      - name: ingress-nginx
+        chartPath: api-gateway/ingress-nginx
+      - name: keycloak
+        chartPath: api-gateway/keycloak
+        valuesFiles:
+          - api-gateway/keycloak-values.yaml
+      - name: vparking-users
+        chartPath: vparking/vparking-users
+      

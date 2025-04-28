@@ -9,7 +9,7 @@ metadata:
 spec:
   containers:
     - name: wget
-      image: busybox
+      image: cr.yandex/crpo2q44fm7kalr36b4h/bosybox 
       command: ['wget']
       args: ['{{ include "vparking-settings.fullname" . }}:{{ .Values.service.port }}']
   restartPolicy: Never
