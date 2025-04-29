@@ -12,6 +12,7 @@
         <PackageReference Include="AutoMapper" Version="14.0.0" />
         <PackageReference Include="Keycloak.Net.Core" Version="1.0.34" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.4"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     </ItemGroup>
 
 </Project>

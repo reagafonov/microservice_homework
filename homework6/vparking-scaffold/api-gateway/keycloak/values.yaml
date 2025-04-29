@@ -1312,6 +1312,7 @@ keycloakConfigCli:
             "registrationAllowed": true,
             "rememberMe": true,
             "resetPasswordAllowed": true,
+            
             "clients": [
               {
                 "clientId": "vparking",
@@ -1323,7 +1324,7 @@ keycloakConfigCli:
                 "webOrigins": [
                   "https://arch.homework"
                 ],
-                "directAccessGrantsEnabled": false,
+                "directAccessGrantsEnabled": true,
                 "publicClient": false,
                 "protocolMappers": [
                   {

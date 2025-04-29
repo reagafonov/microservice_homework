@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("vparking-users")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9943bd13ec3b57794b960da34238e017deebc44a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c717711607406beb2fabf4309a984cf5fb6d93aa")]
 [assembly: System.Reflection.AssemblyProductAttribute("vparking-users")]
 [assembly: System.Reflection.AssemblyTitleAttribute("vparking-users")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

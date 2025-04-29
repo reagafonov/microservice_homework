@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Net.Http.Headers;
 using AutoMapper;
 using Flurl.Http;
 using keycloak_userEditor;
@@ -7,15 +8,20 @@ using Keycloak.Net.Models.Users;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Newtonsoft.Json;
 
 
 var builder = WebApplication.CreateBuilder(args);
-var keycloakSection = builder.Configuration;
-var url = keycloakSection.GetValue<string>("URL");
-var userName = keycloakSection.GetValue<string>("USER_NAME");
-var password = keycloakSection.GetValue<string>("USER_PASSWORD");
-var clientId = keycloakSection.GetValue<string>("CLIENT_ID");
-var realmName = keycloakSection.GetValue<string>("REALM");
+
+
+var configuration = builder.Configuration;
+var url = configuration.GetValue<string>("URL");
+var userName = configuration.GetValue<string>("USER_NAME");
+var password = configuration.GetValue<string>("USER_PASSWORD");
+var clientId = configuration.GetValue<string>("CLIENT_ID");
+var realmName = configuration.GetValue<string>("REALM");
+
+
 Debug.Assert(url != null, nameof(url) + " != null");
 Debug.Assert(userName != null, nameof(userName) + " != null");
 Debug.Assert(password != null, nameof(password) + " != null");
@@ -75,6 +81,31 @@ app.MapGet("/users/{id}", async (HttpContext _, [FromRoute] string id, KeycloakC
     return result != null ? Results.Ok(result) : Results.NotFound();
 });
 
+app.MapPost("/users/auth",  async (HttpContext context, KeycloakClient client, ILogger<WebApplication> log) =>
+{
+    return Results.Ok();
+    log.LogCritical("crit");
+
+    var httpRequest = new HttpRequestMessage(HttpMethod.Get, new Uri(url.TrimEnd('/')+"/realms/{realm}/.well-known/openid-configuration"));
+    var httpClient = new HttpClient();
+    var response = await httpClient.SendAsync(httpRequest);
+    if (!response.IsSuccessStatusCode)
+        return Results.InternalServerError();
+    var result = await response.Content.ReadAsStringAsync();
+    var jsonData = await response.Content.ReadAsStringAsync();
+    dynamic? data = JsonConvert.DeserializeObject(jsonData);
+    if (data == null)
+        return Results.BadRequest();
+    var endpoint = data.UserInfoEndpoint;
+    var checkHttpRequest = new HttpRequestMessage(HttpMethod.Get, new Uri(endpoint));
+    checkHttpRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer",context.Request.Headers.Authorization.First());
+    var responseUser = await httpClient.SendAsync(checkHttpRequest);
+    if (!responseUser.IsSuccessStatusCode)
+        return Results.StatusCode((int)responseUser.StatusCode);
+    var resultUser = await responseUser.Content.ReadAsStringAsync();
+    
+    return Results.Ok(resultUser);
+});
 app.MapPost("/users/add", async ([FromBody] UserInfo userInfo, KeycloakClient adminApi, IMapper mapper,
     ILogger<WebApplication> log, CancellationToken token) =>
 {
@@ -171,3 +202,5 @@ app.UseHealthChecks("/users/health", new HealthCheckOptions
     }
 });
 app.Run();
+
+

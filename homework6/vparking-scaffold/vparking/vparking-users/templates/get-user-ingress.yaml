@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: get-user-ingress
+  namespace: {{.Values.keycloak.namespace}}
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /realms/vparking/protocol/openid-connect/userinfo
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  tls:
+    - hosts:
+        - arch.homework
+      secretName: nginx-ingress-nginx-admission
+  ingressClassName: nginx
+  rules:
+    - host: arch.homework
+      http:
+        paths:
+          - path: /auth/user
+            pathType: Exact
+            backend:
+              service:
+                name: keycloak
+                port:
+                  number: 80
+          

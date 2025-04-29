@@ -12,14 +12,14 @@ build:
 deploy:
   helm:
     releases:
-      - name: ingress-nginx
-        namespace: ingress
-        createNamespace: true
-        chartPath: api-gateway/ingress-nginx
-        skipBuildDependencies: true
-        valuesFiles:
-          - api-gateway/ingress-nginx/values.yaml
-        version: 4.12.1
+#      - name: ingress-nginx
+#        namespace: ingress
+#        createNamespace: true
+#        chartPath: api-gateway/ingress-nginx
+#        skipBuildDependencies: true
+#        valuesFiles:
+#          - api-gateway/ingress-nginx/values.yaml
+#        version: 4.12.1
       - name: keycloak
         namespace: keycloak
         createNamespace: true
@@ -29,7 +29,12 @@ deploy:
           - api-gateway/keycloak/values.yaml
           - api-gateway/keycloak-values.yaml
         version: 24.4.13
-        
+#      - name: oauth2-proxy
+#        namespace: oauth2-proxy
+#        createNamespace: true
+#        chartPath: api-gateway/oauth2-proxy
+#        skipBuildDependencies: true
+#        version: 0.1.0
       - name: vparking-settings
         namespace: vparking
         createNamespace: true
@@ -38,6 +43,7 @@ deploy:
         valuesFiles:
           - vparking/vparking-users/values.yaml
         version: 0.1.0
+  
 portForward:
   - resourceType: Service
     resourceName: vparking-settings
