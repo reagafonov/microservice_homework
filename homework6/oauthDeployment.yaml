@@ -29,10 +29,10 @@ spec:
         - --client-secret=QS3HIGxQqSHF3cL4XiylS9xZIDqZ1P1S
         #- --redirect-url=https://oauth2-proxy.oauth2-proxy.svc.cluster.local/oauth2/callback
         - --redirect-url=https://arch.homework/oauth2/callback
-        - --oidc-issuer-url=https://keycloak.keycloak.svc.cluster.local/realms/vparking
-        - --backend-logout-url=https://keycloak.keycloak.svc.cluster.local/realms/vparking//protocol/openid-connect/logout?id_token_hint={id_token}
+        - --oidc-issuer-url=http://keycloak.keycloak.svc.cluster.local/realms/vparking
+        - --backend-logout-url=http://keycloak.keycloak.svc.cluster.local/realms/vparking//protocol/openid-connect/logout?id_token_hint={id_token}
         - --email-domain=*
-        #- --code-challenge-method=S256
+        - --code-challenge-method=S256
         - --cookie-secret=ctqULBPoIvY1YuxAuUJGDg==
           #- --upstream=file:///dev/null
         - --http-address=0.0.0.0:4180

@@ -36,3 +36,11 @@
 /Users/romanagafonov/microservices/homework/homework6/vparking-scaffold/vparking/src/obj/Debug/net9.0/vparking-users.pdb
 /Users/romanagafonov/microservices/homework/homework6/vparking-scaffold/vparking/src/obj/Debug/net9.0/vparking-users.genruntimeconfig.cache
 /Users/romanagafonov/microservices/homework/homework6/vparking-scaffold/vparking/src/obj/Debug/net9.0/ref/vparking-users.dll
+/Users/romanagafonov/microservices/homework/homework6/vparking-scaffold/vparking/src/bin/Debug/net9.0/Microsoft.IdentityModel.Abstractions.dll
+/Users/romanagafonov/microservices/homework/homework6/vparking-scaffold/vparking/src/bin/Debug/net9.0/Microsoft.IdentityModel.JsonWebTokens.dll
+/Users/romanagafonov/microservices/homework/homework6/vparking-scaffold/vparking/src/bin/Debug/net9.0/Microsoft.IdentityModel.Logging.dll
+/Users/romanagafonov/microservices/homework/homework6/vparking-scaffold/vparking/src/bin/Debug/net9.0/Microsoft.IdentityModel.Protocols.dll
+/Users/romanagafonov/microservices/homework/homework6/vparking-scaffold/vparking/src/bin/Debug/net9.0/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+/Users/romanagafonov/microservices/homework/homework6/vparking-scaffold/vparking/src/bin/Debug/net9.0/Microsoft.IdentityModel.Tokens.dll
+/Users/romanagafonov/microservices/homework/homework6/vparking-scaffold/vparking/src/bin/Debug/net9.0/Newtonsoft.Json.dll
+/Users/romanagafonov/microservices/homework/homework6/vparking-scaffold/vparking/src/bin/Debug/net9.0/System.IdentityModel.Tokens.Jwt.dll

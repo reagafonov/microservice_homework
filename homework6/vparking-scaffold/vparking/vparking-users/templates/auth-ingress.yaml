@@ -2,9 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: auth-ingress
-  namespace: {{.Values.keycloak.namespace}}
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /realms/vparking/protocol/openid-connect/token
     kubernetes.io/ingress.class: "nginx"
 spec:
   tls:
@@ -16,11 +14,19 @@ spec:
     - host: arch.homework
       http:
         paths:
-          - path: /login
+          - path: /users/login
             pathType: Exact
             backend:
               service:
-                name: keycloak
+                name: vparking-settings
                 port:
-                  number: 80
+                  number: 8080
+          - path: /users/auth
+            pathType: Exact
+            backend:
+              service:
+                name: vparking-settings
+                port:
+                  number: 8080
+            
           

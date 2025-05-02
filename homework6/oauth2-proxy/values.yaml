@@ -19,15 +19,15 @@ config:
   # Add config annotations
   annotations: {}
   # OAuth client ID
-  clientID: ""
+  clientID: "vparking"
   # OAuth client secret
-  clientSecret: "8o3t0mgzGvNzk6ctBvNfhIlU0EGbcaRH"
+  clientSecret: "QS3HIGxQqSHF3cL4XiylS9xZIDqZ1P1S"
   # Create a new secret with the following command
   # openssl rand -base64 32 | head -c 32 | base64
   # Use an existing secret for OAuth2 credentials (see secret.yaml for required fields)
   # Example:
   # existingSecret: secret
-  cookieSecret: "XXXXXXXXXXXXXXXX"
+  cookieSecret: "ctqULBPoIvY1YuxAuUJGDg=="
   # The name of the cookie that oauth2-proxy will create
   # If left empty, it will default to the release name
   cookieName: ""
