@@ -21,6 +21,8 @@
   kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME 8080:$CONTAINER_PORT
 {{- end }}
 
+!!!!Need to register keycloak.keycloak.svc.cluster.local in hosts to 127.0.0.1
+
 NOTE: It may take a few minutes for migration job to be complete.
            You can watch its status by running 'kubectl get --namespace {{ .Release.Namespace }} job -w {{ include "vparking-settings.fullname" . }}'
 

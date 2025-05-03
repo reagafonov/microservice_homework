@@ -744,7 +744,7 @@ adminIngress:
   ## This is supported in Kubernetes 1.18+ and required if you have more than one IngressClass marked as the default for your cluster .
   ## ref: https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/
   ##
-  ingressClassName: ""
+  ingressClassName: "nginx"
   ## @param adminIngress.pathType Ingress path type
   ##
   pathType: ImplementationSpecific
@@ -758,14 +758,14 @@ adminIngress:
   controller: default
   ## @param adminIngress.hostname Default host for the admin ingress record (evaluated as template)
   ##
-  hostname: keycloak.local
+  hostname: arch.homework
   ## @param adminIngress.path [string] Default path for the admin ingress record (evaluated as template)
   ##
-  path: "{{ .Values.httpRelativePath }}"
+  path: "{{ .Values.httpRelativePath }}oauth2-server/admin/"
   ## @param adminIngress.servicePort Backend service port to use
   ## Default is http. Alternative is https.
   ##
-  servicePort: http
+  servicePort: https
   ## @param adminIngress.annotations [object] Additional annotations for the Ingress resource. To enable certificate autogeneration, place here your cert-manager annotations.
   ## Use this parameter to set the required annotations for cert-manager, see
   ## ref: https://cert-manager.io/docs/usage/ingress/#supported-annotations
@@ -1305,81 +1305,82 @@ keycloakConfigCli:
   ##     clients: []
   ##
   configuration: 
-   vparking.json: |
-     {
-            "realm": "vparking",
-            "enabled": true,
-            "registrationAllowed": true,
-            "rememberMe": true,
-            "resetPasswordAllowed": true,
-            "clients": [
-              {
-                "clientId": "vparking",
-                "enabled": true,
-                "secret": "QS3HIGxQqSHF3cL4XiylS9xZIDqZ1P1S",
-                "redirectUris": [
-                  "https://arch.homework/oauth2/callback",
-                  "http://arch.homework/oauth2/callback"
-                ],
-                "webOrigins": [
-                  "https://arch.homework"
-                ],
-                "directAccessGrantsEnabled": false,
-                "publicClient": false,
-                "protocolMappers": [
-                  {
-                    "id": "991f2541-b480-407f-8da8-85cdb0ce3621",
-                    "name": "aud-vparking-mapper",
-                    "protocol": "openid-connect",
-                    "protocolMapper": "oidc-audience-mapper",
-                    "consentRequired": false,
-                    "config": {
-                      "included.client.audience": "vparking",
-                      "id.token.claim": "true",
-                      "lightweight.claim": "false",
-                      "access.token.claim": "true",
-                      "introspection.token.claim": "true"
-                    }
-                  }
-                ],
-                "defaultClientScopes": [
-                ],
-                "optionalClientScopes": [
-                  "web-origins",
-                  "roles",
-                  "acr",
-                  "address",
-                  "phone",
-                  "offline_access",
-                  "profile",
-                  "organization",
-                  "microprofile-jwt",
-                  "basic",
-                  "email"
-                ]
-              }
-            ],
-            "components": {
-     
-                 "org.keycloak.userprofile.UserProfileProvider": [
-                  {
-                    "id": "f8bd2a84-e2eb-4227-9e71-7e6d354b888d",
-                    "providerId": "declarative-user-profile",
-                    "subComponents": {},
-                    "config": {
-                      "kc.user.profile.config":["{\"attributes\":[{\"name\":\"username\",\"displayName\":\"${username}\",\"validations\":{\"length\":{\"min\":3,\"max\":255},\"username-prohibited-characters\":{},\"up-username-not-idn-homograph\":{}},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"email\",\"displayName\":\"${email}\",\"validations\":{\"email\":{},\"length\":{\"max\":255}},\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"firstName\",\"displayName\":\"${firstName}\",\"validations\":{\"length\":{\"max\":255},\"person-name-prohibited-characters\":{}},\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"lastName\",\"displayName\":\"${lastName}\",\"validations\":{\"length\":{\"max\":255},\"person-name-prohibited-characters\":{}},\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"AvatarUrl\",\"displayName\":\"AvatarUrl\",\"validations\":{\"uri\":{\"allowFragment\":true,\"requireValidUrl\":true}},\"annotations\":{},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"Age\",\"displayName\":\"Age\",\"validations\":{},\"annotations\":{},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false}],\"groups\":[{\"name\":\"user-metadata\",\"displayHeader\":\"User metadata\",\"displayDescription\":\"Attributes, which refer to user metadata\"}]}"]
-                    }
-                  }
-                 ],
+     vparking.json: |
+       {
+         "realm": "vparking",
+         "enabled": true,
+         "registrationAllowed": true,
+         "rememberMe": true,
+         "resetPasswordAllowed": true,
+         "clients": [
+           {
+             "clientId": "vparking",
+             "enabled": true,
+             "secret": "QS3HIGxQqSHF3cL4XiylS9xZIDqZ1P1S",
+             "redirectUris": [
+               "https://arch.homework/oauth2/callback",
+               "http://arch.homework/oauth2/callback"
+             ],
+             "webOrigins": [
+               "https://arch.homework"
+             ],
+             "directAccessGrantsEnabled": false,
+             "publicClient": false,
+             "protocolMappers": [
+               {
+                 "id": "991f2541-b480-407f-8da8-85cdb0ce3621",
+                 "name": "aud-vparking-mapper",
+                 "protocol": "openid-connect",
+                 "protocolMapper": "oidc-audience-mapper",
+                 "consentRequired": false,
+                 "config": {
+                   "included.client.audience": "vparking",
+                   "id.token.claim": "true",
+                   "lightweight.claim": "false",
+                   "access.token.claim": "true",
+                   "introspection.token.claim": "true"
+                 }
+               }
+             ],
+             "defaultClientScopes": [
+                "openid",
+                "email",
+                "profile"
+             ],
+             "optionalClientScopes": [
+               "web-origins",
+               "roles",
+               "acr",
+               "address",
+               "phone",
+               "offline_access",
+               "organization",
+               "microprofile-jwt",
+               "basic"
+             ]
+           }
+         ],
+         "components": {
+       
+           "org.keycloak.userprofile.UserProfileProvider": [
+             {
+               "id": "f8bd2a84-e2eb-4227-9e71-7e6d354b888d",
+               "providerId": "declarative-user-profile",
+               "subComponents": {},
+               "config": {
+                 "kc.user.profile.config":["{\"attributes\":[{\"name\":\"username\",\"displayName\":\"${username}\",\"validations\":{\"length\":{\"min\":3,\"max\":255},\"username-prohibited-characters\":{},\"up-username-not-idn-homograph\":{}},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"email\",\"displayName\":\"${email}\",\"validations\":{\"email\":{},\"length\":{\"max\":255}},\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"firstName\",\"displayName\":\"${firstName}\",\"validations\":{\"length\":{\"max\":255},\"person-name-prohibited-characters\":{}},\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"lastName\",\"displayName\":\"${lastName}\",\"validations\":{\"length\":{\"max\":255},\"person-name-prohibited-characters\":{}},\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"AvatarUrl\",\"displayName\":\"AvatarUrl\",\"validations\":{\"uri\":{\"allowFragment\":true,\"requireValidUrl\":true}},\"annotations\":{},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"Age\",\"displayName\":\"Age\",\"validations\":{},\"annotations\":{},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false}],\"groups\":[{\"name\":\"user-metadata\",\"displayHeader\":\"User metadata\",\"displayDescription\":\"Attributes, which refer to user metadata\"}]}"]
+               }
+             }
+           ],
+       
+         },
+         "internationalizationEnabled": true,
+         "supportedLocales": [
+           "ru"
+         ],
+         "defaultLocale": "ru",
+       }
 
-            },
-            "internationalizationEnabled": true,
-            "supportedLocales": [
-              "ru"
-            ],
-            "defaultLocale": "ru",
-        }
-  
   ## @param keycloakConfigCli.existingConfigmap ConfigMap with keycloak-config-cli configuration
   ## NOTE: This will override keycloakConfigCli.configuration
   ##

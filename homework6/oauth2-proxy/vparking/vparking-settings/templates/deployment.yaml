@@ -45,15 +45,31 @@ spec:
               protocol: TCP
           env:
             - name: "URL"
-              value: {{.Values.keycloak.url}}
+              valueFrom:
+                configMapKeyRef:
+                  key: url
+                  name: config-map-settings
             - name: "REALM"
-              value: {{.Values.keycloak.realm}}
-            - name: "CLIENT_ID"
-              value: {{.Values.keycloak.clientId}}
+              valueFrom:
+                configMapKeyRef:
+                  key: realm
+                  name: config-map-settings
             - name: "USER_NAME"
-              value: {{.Values.keycloak.auth.user}}
+              valueFrom:
+                configMapKeyRef:
+                  key: user_name
+                  name: config-map-settings
             - name: "USER_PASSWORD"
-              value: {{.Values.keycloak.auth.password}}
+              valueFrom:
+                secretKeyRef:
+                  key: keycloak_admin_password
+                  name: settings-secret
+            - name: "CLIENT_ID" 
+              valueFrom:
+                configMapKeyRef:
+                  key: client_id
+                  name: config-map-settings
+           
           livenessProbe:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
           readinessProbe:

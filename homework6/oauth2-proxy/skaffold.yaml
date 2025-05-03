@@ -1,0 +1,22 @@
+apiVersion: skaffold/v4beta12
+kind: Config
+metadata:
+  name: oauth--proxy
+build:
+  artifacts:
+    - image: vparking-users
+      context: vparking/src
+      docker:
+        dockerfile: Dockerfile
+
+deploy:
+  helm:
+    releases:
+      - name: vparking-settings
+        chartPath: vparking/vparking-settings
+        namespace: keycloak
+        createNamespace: true
+        valuesFiles:
+          - vparking/vparking-settings/values.yaml
+        version: 0.1.0
+    

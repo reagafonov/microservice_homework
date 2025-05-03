@@ -5,6 +5,8 @@
 # This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
 replicaCount: 1
 
+
+
 # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
 commonTag: ""
 image:
@@ -159,26 +161,46 @@ tolerations: []
 
 affinity: {}
 
-dbAuth:
-  username: "keycloak1"
-  password: 9ZuzN0KZHl
-  postgresPassword: "postgres"
-  server: "db"
-
 prometheus:
   release: "monitoring"
 monitoring:
   enabled: false
-  
+
+userService:
+  client_id: "admin-cli"
+  url:  "http://keycloak.keycloak.svc.cluster.local"
+  user_name:  "user"
+  user_password:  "qwerty"
+  realm:  "vparking"
+
 keycloak:
-  auth:
-    user: user
-    password: qwerty
-  url: "http://keycloak.keycloak.svc.cluster.local"
-  realm: vparking
-  clientId: admin-cli
-  
-oauth2-proxy:
   enabled: true
+  auth: 
+    adminUser: "user"
+    adminPassword: qwerty
+#    existingSecret: settings-secret,
+#    passwordSecretKey: keycloak_admin_password
+    
+  fullnameOverride: "keycloak"
+  namespaceOverride: "keycloak"
+
+
+oauth2-proxy:
   fullnameOverride: oauth2-proxy
+  config:
+    configFile: |-
+      email_domains = [ "yandex.ru" ]
+      upstreams = [ "file:///dev/null" ]
+      provider = "keycloak-oidc"
+      redirect_url = "http://arch.homework/oauth2/callback"
+      oidc_issuer_url = "https://keycloak.keycloak.svc.cluster.local/realms/vparking"
+      code_challenge_method = "S256"
+      ssl_insecure_skip_verify = true
+      client_id = "vparking"
+      client_secret = "MFnfmrz49a5NmxXcpZwF9MavW5yPEPW7"
+      silence_ping_logging = true
+      whitelist_domains = ["arch.homework", "keycloak.keycloak.svc.cluster.local"]
+      show_debug_on_error = true
+      backend_logout_url = "https://keycloak.keycloak.svc.cluster.local/realms/vparking//protocol/openid-connect/logout?id_token_hint={id_token}"
+      skip_provider_button = true
   

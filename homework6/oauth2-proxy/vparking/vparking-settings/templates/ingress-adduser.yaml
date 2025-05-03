@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: register-users
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  tls:
+    - hosts:
+        - arch.homework
+      secretName: nginx-ingress-nginx-admission
+  ingressClassName: nginx
+  rules:
+    - host: arch.homework
+      http:
+        paths:
+          - path: /users/add
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: vparking-settings
+                port:
+                  number: 8080
+          

@@ -5,10 +5,10 @@ EXPOSE 8080
 EXPOSE 8081
 EXPOSE 22
 
-ENV CLIENT_ID "admin-cli" 
-ENV URL  "http://keycloak.keycloak.svc.cluster.local" 
-ENV USER_NAME  "user"
-ENV USER_PASSWORD  "bitnami" 
+ENV CLIENT_ID = "admin-cli" 
+ENV URL = "http://keycloak.keycloak.svc.cluster.local" 
+ENV USER_NAME = "user"
+ENV USER_PASSWORD = "bitnami" 
 ENV REALM = "vparking"
 FROM cr.yandex/crpo2q44fm7kalr36b4h/sdk9  AS build
 ARG BUILD_CONFIGURATION=Debug
