@@ -219,13 +219,18 @@ extraContainers: []
   #    image: nginx:latest
 
 # Additional Init containers to be added to the pod.
-extraInitContainers: []
-  #  - name: wait-for-idp
-  #    image: my-idp-wait:latest
-  #    command:
-  #    - sh
-  #    - -c
-  #    - wait-for-idp.sh
+extraInitContainers: 
+    - name: check-keycloak
+      image: busybox:latest
+      command:
+      - sh
+      - -c
+      - |
+          until wget --spider  http://keycloak.keycloak.svc.cluster.local/realms/vparking/.well-known/openid-configuration &> /dev/null          
+          do
+            echo "waiting for keycloak container..."
+            sleep 2
+          done
 
 priorityClassName: ""
 
