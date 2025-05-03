@@ -1318,7 +1318,8 @@ keycloakConfigCli:
                 "enabled": true,
                 "secret": "QS3HIGxQqSHF3cL4XiylS9xZIDqZ1P1S",
                 "redirectUris": [
-                  "https://arch.homework/oauth2/callback"
+                  "https://arch.homework/oauth2/callback",
+                  "http://arch.homework/oauth2/callback"
                 ],
                 "webOrigins": [
                   "https://arch.homework"

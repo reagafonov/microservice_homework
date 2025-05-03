@@ -11,8 +11,10 @@ dependencies:
 - alias: redis
   condition: redis.enabled
   name: redis
-  repository: https://charts.bitnami.com/bitnami
   version: 20.13.4
+- name: keycloak
+  version: 24.4.13
+  condition: keycloak.enabled
 description: A reverse proxy that provides authentication with Google, Github or other
   providers
 home: https://oauth2-proxy.github.io/oauth2-proxy/

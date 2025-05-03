@@ -5,6 +5,8 @@ global: {}
 #   - name: pullSecret1
 #   - name: pullSecret2
 
+fullnameOverride: ""
+
 ## Override the deployment namespace
 ##
 namespaceOverride: ""
@@ -520,3 +522,7 @@ extraObjects: []
   #         objectName: cookie-secret
   #       secretName: oauth2-proxy-secrets-store
   #       type: Opaque
+keycloak: 
+  enabled: true
+  fullnameOverride: "keycloak"
+  namespaceOverride: "keycloak"
