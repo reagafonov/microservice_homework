@@ -93,7 +93,7 @@ app.MapPost("/users/login",
 
         var conentStrnig = await res.Content.ReadAsStringAsync();
         var tokenResult = JsonConvert.DeserializeObject<TokenResult>(conentStrnig);
-        return Results.Ok(tokenResult);
+        return Results.Json(tokenResult);
     });
 
 app.MapGet("/users/{id}", async (HttpContext _, [FromRoute] string id, KeycloakClient adminApi, IMapper mapper,
