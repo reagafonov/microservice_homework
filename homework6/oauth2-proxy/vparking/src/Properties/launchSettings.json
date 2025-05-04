@@ -8,11 +8,13 @@
       "applicationUrl": "http://localhost:5045",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "CLIENT_ID": "admin-cli",
-        "URL": "http://localhost",
+        "ADMIN_CLIENT_ID": "admin-cli",
+        "CLIENT_ID": "vparking",
+        "URL": "https://keycloak.keycloak.svc.cluster.local",
         "USER_NAME": "user",
         "USER_PASSWORD": "qwerty",
-        "REALM": "vparking"
+        "REALM": "vparking",
+        "CLIENT_SECRET": "QS3HIGxQqSHF3cL4XiylS9xZIDqZ1P1S"
       }
     },
     "https": {

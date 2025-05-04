@@ -7,6 +7,7 @@ metadata:
     {{- toYaml . | nindent 8 }}
   {{- end}}
 data:
+  admin_client_id: "{{.Values.userService.admin_client_id}}"
   client_id: "{{.Values.userService.client_id}}"
   url: "{{.Values.userService.url}}"
   user_name:  "{{.Values.userService.user_name}}"

@@ -1,5 +1,7 @@
 using System.Diagnostics;
+using System.Net;
 using AutoMapper;
+using Flurl;
 using Flurl.Http;
 using keycloak_userEditor;
 using Keycloak.Net;
@@ -7,6 +9,8 @@ using Keycloak.Net.Models.Users;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Newtonsoft.Json;
+using RestSharp;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,13 +18,17 @@ var keycloakSection = builder.Configuration;
 var url = keycloakSection.GetValue<string>("URL");
 var userName = keycloakSection.GetValue<string>("USER_NAME");
 var password = keycloakSection.GetValue<string>("USER_PASSWORD");
-var clientId = keycloakSection.GetValue<string>("CLIENT_ID");
+var clientID = keycloakSection.GetValue<string>("CLIENT_ID");
+var adminClientID = keycloakSection.GetValue<string>("ADMIN_CLIENT_ID");
 var realmName = keycloakSection.GetValue<string>("REALM");
+var secret= keycloakSection.GetValue<string>("CLIENT_SECRET");
 Debug.Assert(url != null, nameof(url) + " != null");
 Debug.Assert(userName != null, nameof(userName) + " != null");
 Debug.Assert(password != null, nameof(password) + " != null");
-Debug.Assert(clientId != null, nameof(clientId) + " != null");
+Debug.Assert(adminClientID != null, nameof(adminClientID) + " != null");
+Debug.Assert(clientID != null, nameof(clientID) + " != null");
 Debug.Assert(realmName != null, nameof(realmName) + " != null");
+Debug.Assert(secret != null, nameof(secret) + " != null");
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -30,7 +38,7 @@ builder.Services.AddTransient(_ => new KeycloakClient(
     url,
     userName,
     password,
-    new KeycloakOptions(authenticationRealm: "master", adminClientId: clientId)
+    new KeycloakOptions(authenticationRealm: "master", adminClientId: adminClientID)
 ));
 
 // builder.Services.AddKeycloakWebApiAuthentication(builder.Configuration);
@@ -51,7 +59,42 @@ if (app.Environment.IsDevelopment())
 // app.UseAuthentication();
 // app.UseAuthorization();
 
-app.MapPost("/login", () => { });
+app.MapPost("/users/login",
+    async ([FromBody] UserLogin login, ILogger<WebApplication> log, CancellationToken token) =>
+    {
+        var client = new RestClient(url);
+        var wellKnownRequest = new RestRequest($"/realms/{realmName}/.well-known/openid-configuration", Method.Get);
+        var restResponse = await client.ExecuteAsync(wellKnownRequest, token);
+        
+        if (restResponse.StatusCode != HttpStatusCode.OK)
+            return Results.InternalServerError();
+        var tokenData = JsonConvert.DeserializeObject<WellKnownInfo>(restResponse.Content);
+        var tokenUrl = tokenData.TokenEndpoint;
+        
+        var nvc = new List<KeyValuePair<string, string>>();
+        nvc.Add(new KeyValuePair<string, string>("grant_type", "password"));
+        nvc.Add(new KeyValuePair<string, string>("username", login.Login));
+        nvc.Add(new KeyValuePair<string, string>("password", login.Password));
+        nvc.Add(new KeyValuePair<string, string>("client_id", clientID));
+        nvc.Add(new KeyValuePair<string, string>("client_secret", secret));
+        nvc.Add(new KeyValuePair<string, string>("scope", "openid profile email"));
+        using var insecureHandler = new HttpClientHandlerInsecure(); 
+        using var httpClient = new HttpClient(insecureHandler);
+        using var req = new HttpRequestMessage(HttpMethod.Post, tokenUrl) { Content = new FormUrlEncodedContent(nvc) };
+        using var res = await httpClient.SendAsync(req);
+        
+       
+        if (res.StatusCode != System.Net.HttpStatusCode.OK)
+        {
+            if (res.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                return Results.Unauthorized();
+            return Results.InternalServerError();
+        }
+
+        var conentStrnig = await res.Content.ReadAsStringAsync();
+        var tokenResult = JsonConvert.DeserializeObject<TokenResult>(conentStrnig);
+        return Results.Ok(tokenResult);
+    });
 
 app.MapGet("/users/{id}", async (HttpContext _, [FromRoute] string id, KeycloakClient adminApi, IMapper mapper,
     ILogger<WebApplication> logger, CancellationToken token) =>
@@ -69,8 +112,6 @@ app.MapGet("/users/{id}", async (HttpContext _, [FromRoute] string id, KeycloakC
         return Results.InternalServerError();
     }
 
-    // if (user.Identity?.Name != result.UserName)
-    //     return Results.Unauthorized();
     var result = mapper.Map<UserResult>(saveUser);
     return result != null ? Results.Ok(result) : Results.NotFound();
 });
@@ -171,3 +212,12 @@ app.UseHealthChecks("/users/health", new HealthCheckOptions
     }
 });
 app.Run();
+
+//(https://webscraping.ai/faq/httpclient-c/how-do-i-configure-httpclient-c-to-ignore-ssl-certificate-errors)
+class HttpClientHandlerInsecure : HttpClientHandler
+{
+    public HttpClientHandlerInsecure()
+    {
+        ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+    }
+}

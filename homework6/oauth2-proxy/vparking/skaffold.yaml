@@ -14,11 +14,11 @@ deploy:
   helm:
     releases:
       - name: vparking-settings
-        chartPath: vparking-users
+        chartPath: vparking-settings
         namespace: keycloak
         createNamespace: true
         valuesFiles:
-          - vparking-users/values.yaml
+          - vparking-settings/values.yaml
         version: 0.1.0
 portForward:
   - resourceType: Service

@@ -167,11 +167,13 @@ monitoring:
   enabled: false
 
 userService:
-  client_id: "admin-cli"
+  admin_client_id: "admin-cli"
+  client_id: "vparking"
   url:  "http://keycloak.keycloak.svc.cluster.local"
   user_name:  "user"
   user_password:  "qwerty"
   realm:  "vparking"
+  client_secret: "QS3HIGxQqSHF3cL4XiylS9xZIDqZ1P1S"
 
 keycloak:
   enabled: true
@@ -183,6 +185,7 @@ keycloak:
     
   fullnameOverride: "keycloak"
   namespaceOverride: "keycloak"
+  
 
 
 oauth2-proxy:

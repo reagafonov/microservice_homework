@@ -64,12 +64,22 @@ spec:
                 secretKeyRef:
                   key: keycloak_admin_password
                   name: settings-secret
+            - name: "ADMIN_CLIENT_ID"
+              valueFrom:
+                configMapKeyRef:
+                  key: admin_client_id
+                  name: config-map-settings
             - name: "CLIENT_ID" 
               valueFrom:
                 configMapKeyRef:
                   key: client_id
                   name: config-map-settings
-           
+            - name: "CLIENT_SECRET"
+              valueFrom:
+                secretKeyRef:
+                  key: vparking_secret
+                  name: settings-secret
+
           livenessProbe:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
           readinessProbe:
