@@ -15,7 +15,7 @@ vparking-settings:
     passwordUpdateJob:
       enabled: false
     fullnameOverride: "db"
-    commonLabels: {release: "monitoring"}
+    commonLabels: {release: "keycloak"}
     metrics:
       enabled: true
       customMetrics: 
@@ -152,4 +152,4 @@ vparking-settings:
         interval: 30s
         scrapeTimeout: 10s
         labels:
-          {release: "monitoring"}
+          {release: "vparking"}

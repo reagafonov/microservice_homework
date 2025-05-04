@@ -21,16 +21,18 @@ update:
     
 extraInitContainers:
   - name: check-db
-    image: cr.yandex/crpo2q44fm7kalr36b4h/bosybox
+    image: busybox
+   
     command:
       - sh
       - -c
       - |
-        until nc -zv db 5432 &> /dev/null          
-        do
-          echo "waiting for db container..."
-          sleep 2
-        done
+        until nc -z db 5432 &> /dev/null          
+         do
+           echo "waiting for db container..."
+           sleep 2
+         done
+    
 # This is for the secretes for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
 # This is to override the chart name.
@@ -180,7 +182,7 @@ dbAuth:
   server: "db"
 
 prometheus:
-  release: "monitoring"
+  release: "vparking"
     
 postgresql: {}
 
