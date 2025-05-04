@@ -1,0 +1,24 @@
+apiVersion: skaffold/v4beta12
+kind: Config
+metadata:
+  name: homework-
+build:
+  artifacts:
+    - image: reagafonov/vparking-settings-arm64
+      context: src/VParking-Settings
+      docker:
+        dockerfile: Dockerfile
+    - image: reagafonov/vparking-settings-arm64-update
+      context: src/VParking-Settings
+      docker:
+        dockerfile: Dockerfile_update
+deploy:
+  helm:
+    releases:
+    
+      - name: vparking-settings
+        chartPath: helm/vparking-settings
+        valuesFiles:
+          - helm/vparking-settings/values.yaml
+        version: 0.1.0
+     
