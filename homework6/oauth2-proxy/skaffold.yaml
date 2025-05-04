@@ -16,6 +16,7 @@ deploy:
         chartPath: vparking/vparking-settings
         namespace: keycloak
         createNamespace: true
+        skipBuildDependencies: true
         valuesFiles:
           - vparking/vparking-settings/values.yaml
         version: 0.1.0

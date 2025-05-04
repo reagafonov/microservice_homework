@@ -192,7 +192,7 @@ oauth2-proxy:
   fullnameOverride: oauth2-proxy
   config:
     configFile: |-
-      email_domains = [ "yandex.ru" ]
+      email_domains = [ "*" ]
       upstreams = [ "file:///dev/null" ]
       provider = "keycloak-oidc"
       redirect_url = "http://arch.homework/oauth2/callback"
@@ -206,4 +206,5 @@ oauth2-proxy:
       show_debug_on_error = true
       backend_logout_url = "https://keycloak.keycloak.svc.cluster.local/realms/vparking//protocol/openid-connect/logout?id_token_hint={id_token}"
       skip_provider_button = true
+      skip_jwt_bearer_tokens = true
   
