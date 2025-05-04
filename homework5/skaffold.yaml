@@ -1,24 +1,28 @@
 apiVersion: skaffold/v4beta12
 kind: Config
 metadata:
-  name: homework-
+  name: homework-5
 build:
   artifacts:
-    - image: reagafonov/vparking-settings-arm64
+    - image: vparking-settings-arm64
       context: src/VParking-Settings
       docker:
         dockerfile: Dockerfile
-    - image: reagafonov/vparking-settings-arm64-update
+    - image: vparking-settings-arm64-update
       context: src/VParking-Settings
       docker:
         dockerfile: Dockerfile_update
 deploy:
   helm:
     releases:
-    
-      - name: vparking-settings
-        chartPath: helm/vparking-settings
+      
+      - name: vparking
+        chartPath: helm/vparking
+        namespace: keycloak
+        createNamespace: true
+        skipBuildDependencies: true    
         valuesFiles:
-          - helm/vparking-settings/values.yaml
+          - helm/vparking/values.yaml
+          - helm/postgres.yaml
         version: 0.1.0
      

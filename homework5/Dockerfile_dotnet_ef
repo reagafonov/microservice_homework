@@ -1,0 +1,4 @@
+﻿FROM mcr.microsoft.com/dotnet/sdk:9.0 AS base
+ENV PATH="$PATH:/root/.dotnet/tools"
+RUN ["/bin/bash","-c","dotnet tool install --global dotnet-ef "]
+

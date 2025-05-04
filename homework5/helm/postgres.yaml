@@ -1,153 +1,155 @@
-primary:
-  extendedConfiguration: |
-    shared_preload_libraries = 'pg_stat_statements'  
-     pg_stat_statements.max = 10000
-     pg_stat_statements.track = top
-postgresqlSharedPreloadLibraries: "pgaudit, pg_stat_statements"
-auth:
-  username: "keycloak1"
-  password: 9ZuzN0KZHl
-  postgresPassword: "postgres"
-  enablePostgresUser: true
-  
-passwordUpdateJob:
-  enabled: false
-fullnameOverride: "db"
-commonLabels: {release: "monitoring"}
-metrics:
-  enabled: true
-  customMetrics: 
-    pg_database:
-      query: " SELECT pg_database.datname, pg_database_size(pg_database.datname) as size FROM pg_database"
-      metrics:
-        - datname:
-            usage: "LABEL"
-            description: "Name of the database"
-        - size:
-            usage: "GAUGE"
-            description: "Disk space used by the database"
-    pg_stat_statements:
-      query: "SELECT  queryid, datname, left(query, 100) as short_query, sum(calls) as calls, sum(total_plan_time+total_exec_time) as total_time, min(min_plan_time+min_exec_time) as min_time, max(max_plan_time+max_exec_time) as max_time, sum((mean_plan_time+mean_exec_time)*calls)/sum(calls) as mean_time FROM pg_stat_statements JOIN pg_database ON pg_stat_statements.dbid = pg_database.oid group by queryid, short_query, datname"
-      metrics:
-        - queryid:
-            usage: "LABEL"
-            description: "Query ID"
-        - datname:
-            usage: "LABEL"
-            description: "Database name"
-        - short_query:
-            usage: "LABEL"
-            description: "Query limited to 100 symbols"
-        - calls:
-            usage: "COUNTER"
-            description: "Number of times executed"
-        - total_time:
-            usage: "COUNTER"
-            description: "Total time spent in the statement, in milliseconds"
-        - min_time:
-            usage: "GAUGE"
-            description: "Minimum time spent in the statement, in milliseconds"
-        - max_time:
-            usage: "GAUGE"
-            description: "Maximum time spent in the statement, in milliseconds"
-    pg_stat_activity_connected:
-      query:  "SELECT
-  
-                count(*) FILTER (WHERE state IS NOT NULL) AS total,
-  
-                count(*) FILTER (WHERE state = 'idle') AS idle,
-                
-                count(*) FILTER (WHERE state IN ('idle in transaction', 'idle in transaction (aborted)')) AS idle_in_xact,
-                
-                count(*) FILTER (WHERE state = 'active') AS active,
-                
-                count(*) FILTER (WHERE wait_event_type = 'Lock') AS waiting,
-                
-                count(*) FILTER (WHERE state IN ('fastpath function call','disabled')) AS others
-                
-                FROM pg_stat_activity WHERE backend_type = 'client backend'"
-      metrics:
-        - total: 
-            usage: "GAUGE"
-            description: "The total number of connected clients and their states (active, idle in transaction, waiting)"
-        - idle:
-            usage: "GAUGE"
-            description: "Number of connected clients in idle state"
-        - idle_in_xact:
-            usage: "GAUGE"
-            description: "Number of connected clients in 'idle in transaction', 'idle in transaction (aborted) states"
-        - active:
-            usage: "GAUGE"
-            description: "Number of connected clients in 'Lock' state"
-        - waiting:
-            usage: "GAUGE"
-            description: "Number of connected clients in 'fastpath function call','disabled' states"
-        - others:
-            usage: "GAUGE"
-            description: "Number of connected clients in 'fastpath function call','disabled' states"
-          
-    pg_stat_activity_xact:
-      query: "SELECT coalesce(max(extract(epoch FROM clock_timestamp() - xact_start)),0) AS max_idle_seconds FROM pg_stat_activity WHERE state IN ('idle in transaction', 'idle in transaction (aborted)')"
-      metrics:
-        - max_idle_seconds:
-            usage: "GAUGE"
-            description: "Longest idle transaction"
-    pg_stat_activity_client:
-      query: "SELECT coalesce(max(extract(epoch FROM clock_timestamp() - state_change)),0) AS max_idle_seconds FROM pg_stat_activity WHERE wait_event_type = 'Lock'"
-      metrics:
-        - max_idle_seconds:
-            usage: "GAUGE"
-            description: "Longest time when a client is in a waiting state."
-    pg_process_idle:
-      query: |
-        WITH
-          metrics AS (
+vparking-settings:
+  postgresql: 
+    primary:
+      extendedConfiguration: |
+        shared_preload_libraries = 'pg_stat_statements'  
+         pg_stat_statements.max = 10000
+         pg_stat_statements.track = top
+    postgresqlSharedPreloadLibraries: "pgaudit, pg_stat_statements"
+    auth:
+      username: "keycloak1"
+      password: 9ZuzN0KZHl
+      postgresPassword: "postgres"
+      enablePostgresUser: true
+      
+    passwordUpdateJob:
+      enabled: false
+    fullnameOverride: "db"
+    commonLabels: {release: "monitoring"}
+    metrics:
+      enabled: true
+      customMetrics: 
+        pg_database:
+          query: " SELECT pg_database.datname, pg_database_size(pg_database.datname) as size FROM pg_database"
+          metrics:
+            - datname:
+                usage: "LABEL"
+                description: "Name of the database"
+            - size:
+                usage: "GAUGE"
+                description: "Disk space used by the database"
+        pg_stat_statements:
+          query: "SELECT  queryid, datname, left(query, 100) as short_query, sum(calls) as calls, sum(total_plan_time+total_exec_time) as total_time, min(min_plan_time+min_exec_time) as min_time, max(max_plan_time+max_exec_time) as max_time, sum((mean_plan_time+mean_exec_time)*calls)/sum(calls) as mean_time FROM pg_stat_statements JOIN pg_database ON pg_stat_statements.dbid = pg_database.oid group by queryid, short_query, datname"
+          metrics:
+            - queryid:
+                usage: "LABEL"
+                description: "Query ID"
+            - datname:
+                usage: "LABEL"
+                description: "Database name"
+            - short_query:
+                usage: "LABEL"
+                description: "Query limited to 100 symbols"
+            - calls:
+                usage: "COUNTER"
+                description: "Number of times executed"
+            - total_time:
+                usage: "COUNTER"
+                description: "Total time spent in the statement, in milliseconds"
+            - min_time:
+                usage: "GAUGE"
+                description: "Minimum time spent in the statement, in milliseconds"
+            - max_time:
+                usage: "GAUGE"
+                description: "Maximum time spent in the statement, in milliseconds"
+        pg_stat_activity_connected:
+          query:  "SELECT
+      
+                    count(*) FILTER (WHERE state IS NOT NULL) AS total,
+      
+                    count(*) FILTER (WHERE state = 'idle') AS idle,
+                    
+                    count(*) FILTER (WHERE state IN ('idle in transaction', 'idle in transaction (aborted)')) AS idle_in_xact,
+                    
+                    count(*) FILTER (WHERE state = 'active') AS active,
+                    
+                    count(*) FILTER (WHERE wait_event_type = 'Lock') AS waiting,
+                    
+                    count(*) FILTER (WHERE state IN ('fastpath function call','disabled')) AS others
+                    
+                    FROM pg_stat_activity WHERE backend_type = 'client backend'"
+          metrics:
+            - total: 
+                usage: "GAUGE"
+                description: "The total number of connected clients and their states (active, idle in transaction, waiting)"
+            - idle:
+                usage: "GAUGE"
+                description: "Number of connected clients in idle state"
+            - idle_in_xact:
+                usage: "GAUGE"
+                description: "Number of connected clients in 'idle in transaction', 'idle in transaction (aborted) states"
+            - active:
+                usage: "GAUGE"
+                description: "Number of connected clients in 'Lock' state"
+            - waiting:
+                usage: "GAUGE"
+                description: "Number of connected clients in 'fastpath function call','disabled' states"
+            - others:
+                usage: "GAUGE"
+                description: "Number of connected clients in 'fastpath function call','disabled' states"
+              
+        pg_stat_activity_xact:
+          query: "SELECT coalesce(max(extract(epoch FROM clock_timestamp() - xact_start)),0) AS max_idle_seconds FROM pg_stat_activity WHERE state IN ('idle in transaction', 'idle in transaction (aborted)')"
+          metrics:
+            - max_idle_seconds:
+                usage: "GAUGE"
+                description: "Longest idle transaction"
+        pg_stat_activity_client:
+          query: "SELECT coalesce(max(extract(epoch FROM clock_timestamp() - state_change)),0) AS max_idle_seconds FROM pg_stat_activity WHERE wait_event_type = 'Lock'"
+          metrics:
+            - max_idle_seconds:
+                usage: "GAUGE"
+                description: "Longest time when a client is in a waiting state."
+        pg_process_idle:
+          query: |
+            WITH
+              metrics AS (
+                SELECT
+                  application_name,
+                  SUM(EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - state_change))::bigint)::float AS process_idle_seconds_sum,
+                  COUNT(*) AS process_idle_seconds_count
+                FROM pg_stat_activity
+                WHERE state = 'idle'
+                GROUP BY application_name
+              ),
+              buckets AS (
+                SELECT
+                  application_name,
+                  le,
+                  SUM(
+                    CASE WHEN EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - state_change)) <= le
+                      THEN 1
+                      ELSE 0
+                    END
+                  )::bigint AS bucket
+                FROM
+                  pg_stat_activity,
+                  UNNEST(ARRAY[1, 2, 5, 15, 30, 60, 90, 120, 300]) AS le
+                GROUP BY application_name, le
+                ORDER BY application_name, le
+              )
             SELECT
               application_name,
-              SUM(EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - state_change))::bigint)::float AS process_idle_seconds_sum,
-              COUNT(*) AS process_idle_seconds_count
-            FROM pg_stat_activity
-            WHERE state = 'idle'
-            GROUP BY application_name
-          ),
-          buckets AS (
-            SELECT
-              application_name,
-              le,
-              SUM(
-                CASE WHEN EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - state_change)) <= le
-                  THEN 1
-                  ELSE 0
-                END
-              )::bigint AS bucket
-            FROM
-              pg_stat_activity,
-              UNNEST(ARRAY[1, 2, 5, 15, 30, 60, 90, 120, 300]) AS le
-            GROUP BY application_name, le
-            ORDER BY application_name, le
-          )
-        SELECT
-          application_name,
-          process_idle_seconds_sum as seconds_sum,
-          process_idle_seconds_count as seconds_count,
-          ARRAY_AGG(le) AS seconds,
-          ARRAY_AGG(bucket) AS seconds_bucket
-        FROM metrics JOIN buckets USING (application_name)
-        GROUP BY 1, 2, 3
-      metrics:
-        - application_name:
-            usage: "LABEL"
-            description: "Application Name"
-        - seconds:
-            usage: "HISTOGRAM"
-            description: "Idle time of server processes"
-   
-  service:
-    ports:
-      metrics: 9187
-  serviceMonitor:
-    enabled: true
-    interval: 30s
-    scrapeTimeout: 10s
-    labels:
-      {release: "monitoring"}
+              process_idle_seconds_sum as seconds_sum,
+              process_idle_seconds_count as seconds_count,
+              ARRAY_AGG(le) AS seconds,
+              ARRAY_AGG(bucket) AS seconds_bucket
+            FROM metrics JOIN buckets USING (application_name)
+            GROUP BY 1, 2, 3
+          metrics:
+            - application_name:
+                usage: "LABEL"
+                description: "Application Name"
+            - seconds:
+                usage: "HISTOGRAM"
+                description: "Idle time of server processes"
+       
+      service:
+        ports:
+          metrics: 9187
+      serviceMonitor:
+        enabled: true
+        interval: 30s
+        scrapeTimeout: 10s
+        labels:
+          {release: "monitoring"}
