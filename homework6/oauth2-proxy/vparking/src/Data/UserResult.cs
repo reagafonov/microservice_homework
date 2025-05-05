@@ -4,6 +4,9 @@ namespace keycloak_userEditor;
 
 public class UserResult
 {
+    [JsonProperty("sub")]
+    public string Id { get; set; }
+    
     [JsonProperty("given_name")]
     public string FirstName { get; set; }
 
