@@ -44,8 +44,6 @@ builder.Services.AddTransient(_ => new KeycloakClient(
     new KeycloakOptions(authenticationRealm: "master", adminClientId: adminClientID)
 ));
 
-// builder.Services.AddKeycloakWebApiAuthentication(builder.Configuration);
-// builder.Services.AddAuthorization();
 
 
 builder.Services.AddAutoMapper(typeof(UserInfo).Assembly);
@@ -59,72 +57,6 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-// app.UseAuthentication();
-// app.UseAuthorization();
-
-app.MapPost("/users/login",
-    async ([FromBody] UserLogin login, ILogger<WebApplication> log, CancellationToken token) =>
-    {
-        var (hasError, wellKnown, result) = await GetWellKnown(url, realmName, token);
-        if (hasError)
-            return result;
-
-        var nvc = new List<KeyValuePair<string, string>>();
-        nvc.Add(new KeyValuePair<string, string>("grant_type", "password"));
-        nvc.Add(new KeyValuePair<string, string>("username", login.Login));
-        nvc.Add(new KeyValuePair<string, string>("password", login.Password));
-        nvc.Add(new KeyValuePair<string, string>("client_id", clientID));
-        nvc.Add(new KeyValuePair<string, string>("client_secret", secret));
-        nvc.Add(new KeyValuePair<string, string>("scope", "openid profile email"));
-
-        var (tokenResult, error) =
-            await GetDataTypedAsync<TokenResult>(wellKnown.TokenEndpoint, new FormUrlEncodedContent(nvc));
-        if (error != null)
-            return error;
-        return Results.Json(tokenResult);
-    });
-
-app.MapGet("/users/logout",
-    async (HttpContext context, [FromQuery(Name = "refresh_token")] string refreshToken,  ILogger<WebApplication> log,
-        CancellationToken token) =>
-    {
-        var (hasError, wellKnown, result) = await GetWellKnown(url, realmName, token);
-        if (hasError)
-            return result;
-
-        var nvc = new List<KeyValuePair<string, string>>
-        {
-            new("client_id", clientID),
-            new("refresh_token", refreshToken),
-        };
-        var headers = new Dictionary<string, string>()
-        {
-            {"Authorization", "Bearer " + context.Request.Headers["Authorization"].FirstOrDefault().Split(' ')[1]}
-        };
-        // var (_, error) = await GetDataAsync(wellKnown.LogoutEndpoint, new FormUrlEncodedContent(nvc),headers);
-        // if (error != null)
-        //     return error;
-        var (_, error) = await GetDataAsync("http://oauth2-proxy.keycloak.svc.cluster.local/oauth2/sign_out",
-            new FormUrlEncodedContent(nvc),headers);
-        if (error != null)
-            return error;
-        return error ?? Results.Ok();
-    });
-
-app.MapGet("/users/me", async (HttpContext context,
-    [FromHeader(Name = "X-Auth-Request-Access-Token")] string accessToken, IMapper mapper,
-    ILogger<WebApplication> logger, CancellationToken token) =>
-{
-    User saveUser;
-    var (hasError, wellKnown, result) = await GetWellKnown(url, realmName, token);
-    if (hasError)
-        return result ?? Results.InternalServerError();
-    var headers = new Dictionary<string, string>() { { "Authorization", "Bearer " + accessToken } };
-    var (value, error) = await GetDataTypedAsync<UserResult>(wellKnown.UserInfoEndpoint, null, headers);
-    if (error != null)
-        return error ?? Results.InternalServerError();
-    return Results.Ok(value);
-});
 
 app.MapPost("/users/add", async ([FromBody] UserInfo userInfo, KeycloakClient adminApi, IMapper mapper,
     ILogger<WebApplication> log, CancellationToken token) =>
@@ -161,18 +93,44 @@ app.MapPost("/users/add", async ([FromBody] UserInfo userInfo, KeycloakClient ad
     }
 });
 
-app.MapPut("/users/{id}", async (HttpContext _, [FromRoute] string id, [FromBody] UserUpdate userInfo,
+
+app.MapGet("/users/me", async (HttpContext context,
+    [FromHeader(Name = "X-Auth-Request-Access-Token")] string accessToken,  CancellationToken token) =>
+{
+    var (value, error) = await GetUserInfoAsync(accessToken, token);
+    if (error != null)
+        return error;
+
+    return Results.Ok(value);
+});
+
+async Task<(UserResult? value, IResult internalServerError1)> GetUserInfoAsync(string accessToken, CancellationToken cancellationToken)
+{
+    var (hasError, wellKnown, result) = await GetWellKnown(url, realmName, cancellationToken);
+    if (hasError)
+        return (null, result ?? Results.InternalServerError());
+    var headers = new Dictionary<string, string>() { { "Authorization", "Bearer " + accessToken } };
+    var (userResult, error) = await GetDataTypedAsync<UserResult>(wellKnown.UserInfoEndpoint, null, headers);
+    if (error != null)
+        return (userResult, error ?? Results.InternalServerError());
+    return (userResult, null);
+}
+
+
+app.MapPut("/users/me", async (HttpContext _, [FromBody] UserUpdate userInfo,
+    [FromHeader(Name = "X-Auth-Request-Access-Token")] string accessToken, 
     KeycloakClient adminApi, IMapper mapper, ILogger<WebApplication> logger, CancellationToken token) =>
 {
     try
     {
-        // if (user.Identity?.Name != userInfo.Login)
-        //     return Results.Unauthorized();
+        var (value, error) = await GetUserInfoAsync(accessToken, token);
+        if (error != null)
+            return error;
         var userRepresentation = mapper.Map<User>(userInfo);
         try
         {
-            userRepresentation.Id = id;
-            await adminApi.UpdateUserAsync(realmName, id, userRepresentation, token);
+            userRepresentation.Id = value.Id;
+            await adminApi.UpdateUserAsync(realmName, value.Id, userRepresentation, token);
             return Results.Ok(mapper.Map<UserResult>(userRepresentation));
         }
         catch (Exception e)
@@ -188,15 +146,13 @@ app.MapPut("/users/{id}", async (HttpContext _, [FromRoute] string id, [FromBody
     }
 });
 
-app.MapDelete("/users/{id}",
-    async (HttpContext _, [FromRoute] string id, KeycloakClient adminApi, CancellationToken token) =>
+app.MapDelete("/users/me",
+    async (HttpContext _,   [FromHeader(Name = "X-Auth-Request-Access-Token")] string accessToken,  KeycloakClient adminApi, CancellationToken token) =>
     {
-        // var result = await adminApi.GetUserAsync(realmName, id);
-        // if (result == null)
-        //     return Results.NotFound();
-        // if (user.Identity?.Name != result.UserName)
-        //     return Results.Unauthorized();
-        await adminApi.DeleteUserAsync(realmName, id, token);
+        var (value, error) = await GetUserInfoAsync(accessToken, token);
+        if (error != null)
+            return error;
+        await adminApi.DeleteUserAsync(realmName, value.Id, token);
         return Results.Ok();
     });
 

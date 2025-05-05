@@ -200,13 +200,12 @@ oauth2-proxy:
       code_challenge_method = "S256"
       ssl_insecure_skip_verify = true
       client_id = "vparking"
-      client_secret = "MFnfmrz49a5NmxXcpZwF9MavW5yPEPW7"
+      client_secret = "QS3HIGxQqSHF3cL4XiylS9xZIDqZ1P1S"
       silence_ping_logging = true
       whitelist_domains = ["arch.homework", "keycloak.keycloak.svc.cluster.local"]
       show_debug_on_error = true
       backend_logout_url = "https://keycloak.keycloak.svc.cluster.local/realms/vparking/protocol/openid-connect/logout?id_token_hint={id_token}"
       skip_provider_button = true
-      skip_jwt_bearer_tokens = true
       set_xauthrequest = true
       pass_user_headers = true
       pass_access_token = true
