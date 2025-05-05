@@ -1,6 +1,0 @@
-﻿services:
-  ocelotgtewayapi:
-    image: ocelotgtewayapi
-    build:
-      context: .
-      dockerfile: Dockerfile
