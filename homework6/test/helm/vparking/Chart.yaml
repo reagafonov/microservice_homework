@@ -28,5 +28,4 @@ dependencies:
     version: 4.12.0
   - name: kube-prometheus-stack
     version: 68.2.1
-  - name: vparking-settings
-    version: 0.1.0
+ 

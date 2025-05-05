@@ -1,13 +1,16 @@
 using System.Diagnostics;
 using System.Net;
+using System.Net.Http.Headers;
 using AutoMapper;
 using Flurl;
 using Flurl.Http;
 using keycloak_userEditor;
 using Keycloak.Net;
+using Keycloak.Net.Models.Clients;
 using Keycloak.Net.Models.Users;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Newtonsoft.Json;
 using RestSharp;
@@ -21,7 +24,7 @@ var password = keycloakSection.GetValue<string>("USER_PASSWORD");
 var clientID = keycloakSection.GetValue<string>("CLIENT_ID");
 var adminClientID = keycloakSection.GetValue<string>("ADMIN_CLIENT_ID");
 var realmName = keycloakSection.GetValue<string>("REALM");
-var secret= keycloakSection.GetValue<string>("CLIENT_SECRET");
+var secret = keycloakSection.GetValue<string>("CLIENT_SECRET");
 Debug.Assert(url != null, nameof(url) + " != null");
 Debug.Assert(userName != null, nameof(userName) + " != null");
 Debug.Assert(password != null, nameof(password) + " != null");
@@ -62,15 +65,10 @@ if (app.Environment.IsDevelopment())
 app.MapPost("/users/login",
     async ([FromBody] UserLogin login, ILogger<WebApplication> log, CancellationToken token) =>
     {
-        var client = new RestClient(url);
-        var wellKnownRequest = new RestRequest($"/realms/{realmName}/.well-known/openid-configuration", Method.Get);
-        var restResponse = await client.ExecuteAsync(wellKnownRequest, token);
-        
-        if (restResponse.StatusCode != HttpStatusCode.OK)
-            return Results.InternalServerError();
-        var tokenData = JsonConvert.DeserializeObject<WellKnownInfo>(restResponse.Content);
-        var tokenUrl = tokenData.TokenEndpoint;
-        
+        var (hasError, wellKnown, result) = await GetWellKnown(url, realmName, token);
+        if (hasError)
+            return result;
+
         var nvc = new List<KeyValuePair<string, string>>();
         nvc.Add(new KeyValuePair<string, string>("grant_type", "password"));
         nvc.Add(new KeyValuePair<string, string>("username", login.Login));
@@ -78,42 +76,54 @@ app.MapPost("/users/login",
         nvc.Add(new KeyValuePair<string, string>("client_id", clientID));
         nvc.Add(new KeyValuePair<string, string>("client_secret", secret));
         nvc.Add(new KeyValuePair<string, string>("scope", "openid profile email"));
-        using var insecureHandler = new HttpClientHandlerInsecure(); 
-        using var httpClient = new HttpClient(insecureHandler);
-        using var req = new HttpRequestMessage(HttpMethod.Post, tokenUrl) { Content = new FormUrlEncodedContent(nvc) };
-        using var res = await httpClient.SendAsync(req);
-        
-       
-        if (res.StatusCode != System.Net.HttpStatusCode.OK)
-        {
-            if (res.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                return Results.Unauthorized();
-            return Results.InternalServerError();
-        }
 
-        var conentStrnig = await res.Content.ReadAsStringAsync();
-        var tokenResult = JsonConvert.DeserializeObject<TokenResult>(conentStrnig);
+        var (tokenResult, error) =
+            await GetDataTypedAsync<TokenResult>(wellKnown.TokenEndpoint, new FormUrlEncodedContent(nvc));
+        if (error != null)
+            return error;
         return Results.Json(tokenResult);
     });
 
-app.MapGet("/users/{id}", async (HttpContext _, [FromRoute] string id, KeycloakClient adminApi, IMapper mapper,
+app.MapGet("/users/logout",
+    async (HttpContext context, [FromQuery(Name = "refresh_token")] string refreshToken,  ILogger<WebApplication> log,
+        CancellationToken token) =>
+    {
+        var (hasError, wellKnown, result) = await GetWellKnown(url, realmName, token);
+        if (hasError)
+            return result;
+
+        var nvc = new List<KeyValuePair<string, string>>
+        {
+            new("client_id", clientID),
+            new("refresh_token", refreshToken),
+        };
+        var headers = new Dictionary<string, string>()
+        {
+            {"Authorization", "Bearer " + context.Request.Headers["Authorization"].FirstOrDefault().Split(' ')[1]}
+        };
+        // var (_, error) = await GetDataAsync(wellKnown.LogoutEndpoint, new FormUrlEncodedContent(nvc),headers);
+        // if (error != null)
+        //     return error;
+        var (_, error) = await GetDataAsync("http://oauth2-proxy.keycloak.svc.cluster.local/oauth2/sign_out",
+            new FormUrlEncodedContent(nvc),headers);
+        if (error != null)
+            return error;
+        return error ?? Results.Ok();
+    });
+
+app.MapGet("/users/me", async (HttpContext context,
+    [FromHeader(Name = "X-Auth-Request-Access-Token")] string accessToken, IMapper mapper,
     ILogger<WebApplication> logger, CancellationToken token) =>
 {
     User saveUser;
-    try
-    {
-        saveUser = await adminApi.GetUserAsync(realmName, id, cancellationToken: token);
-    }
-    catch (FlurlHttpException e)
-    {
-        logger.LogError(e, e.Message);
-        if (e.StatusCode.HasValue)
-            return Results.StatusCode(e.StatusCode.Value);
-        return Results.InternalServerError();
-    }
-
-    var result = mapper.Map<UserResult>(saveUser);
-    return result != null ? Results.Ok(result) : Results.NotFound();
+    var (hasError, wellKnown, result) = await GetWellKnown(url, realmName, token);
+    if (hasError)
+        return result ?? Results.InternalServerError();
+    var headers = new Dictionary<string, string>() { { "Authorization", "Bearer " + accessToken } };
+    var (value, error) = await GetDataTypedAsync<UserResult>(wellKnown.UserInfoEndpoint, null, headers);
+    if (error != null)
+        return error ?? Results.InternalServerError();
+    return Results.Ok(value);
 });
 
 app.MapPost("/users/add", async ([FromBody] UserInfo userInfo, KeycloakClient adminApi, IMapper mapper,
@@ -212,6 +222,60 @@ app.UseHealthChecks("/users/health", new HealthCheckOptions
     }
 });
 app.Run();
+
+async Task<(bool, WellKnownInfo wellKnown, IResult result)> GetWellKnown(string url, string realmName,
+    CancellationToken cancellationToken)
+{
+    var client = new RestClient(url);
+    var wellKnownRequest = new RestRequest($"/realms/{realmName}/.well-known/openid-configuration", Method.Get);
+    var restResponse = await client.ExecuteAsync(wellKnownRequest, cancellationToken);
+
+    if (restResponse.StatusCode != HttpStatusCode.OK)
+    {
+        var internalServerError = Results.InternalServerError();
+        return (true, null, internalServerError);
+    }
+
+    var tokenData = JsonConvert.DeserializeObject<WellKnownInfo>(restResponse.Content);
+    return (false, tokenData, null);
+}
+
+async Task<(TResult? value, IResult? error)> GetDataTypedAsync<TResult>(string url, HttpContent content,
+    Dictionary<string, string>? headers = null)
+    where TResult : class
+{
+    var (value, error) = await GetDataAsync(url, content, headers);
+    if (error != null)
+        return (null, error);
+    var result = JsonConvert.DeserializeObject<TResult>(value);
+    return (result, null);
+}
+
+async Task<(string value, IResult? error)> GetDataAsync(string url, HttpContent content,
+    Dictionary<string, string>? headers = null)
+{
+    using var insecureHandler = new HttpClientHandlerInsecure();
+    using var httpClient = new HttpClient(insecureHandler);
+    using var req = new HttpRequestMessage(HttpMethod.Post, url);
+    req.Content = content;
+    if (headers != null)
+        foreach (var header in headers)
+            req.Headers.Add(header.Key, new[] { header.Value });
+
+    using var res = await httpClient.SendAsync(req);
+
+
+    if (res.StatusCode != System.Net.HttpStatusCode.OK)
+    {
+        if (res.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            return (null, Results.Unauthorized());
+        return (null, Results.InternalServerError());
+    }
+
+    var contentString = await res.Content.ReadAsStringAsync();
+    return (contentString, null);
+}
+
 
 //(https://webscraping.ai/faq/httpclient-c/how-do-i-configure-httpclient-c-to-ignore-ssl-certificate-errors)
 class HttpClientHandlerInsecure : HttpClientHandler

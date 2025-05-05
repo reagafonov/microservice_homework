@@ -29,8 +29,7 @@ public class UserProfile : Profile
                 expression => expression.MapFrom(representation => representation.Attributes[Age].FirstOrDefault()))
             .ForMember(info => info.AvatarUrl,
                 expression =>
-                    expression.MapFrom(representation => representation.Attributes[AvatarUrl].FirstOrDefault()))
-            .ForMember(info => info.Id, expression => expression.MapFrom(representation => representation.Id));
+                    expression.MapFrom(representation => representation.Attributes[AvatarUrl].FirstOrDefault()));
         CreateMap<UserUpdate, User>()
             .ForMember(representation => representation.Attributes, expression => expression.Ignore())
             .ForMember(representation => representation.UserName, expression => expression.MapFrom(info => info.Login))

@@ -122,8 +122,8 @@
     
     affinity: {}
     
-    vparking-settings: 
-      postgresql: {}
+#    vparking-settings: 
+#      postgresql: {}
         
     ingress-nginx: 
       controller: 
