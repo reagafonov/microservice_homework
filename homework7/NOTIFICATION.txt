@@ -1,0 +1,5 @@
+POST Notification/{client_id}/send
+PUT  notification/{client_id}/options
+post notification/{client_id}
+get notification/{client_id}/options
+
