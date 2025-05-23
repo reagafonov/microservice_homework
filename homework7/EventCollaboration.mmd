@@ -1,0 +1,20 @@
+sequenceDiagram
+    user ->> gatewayApi: POST order/client_id (account_id)
+    gatewayApi ->> queue: message: orderCreating 
+    gatewayApi ->> user: orderId
+    queue ->> order: message: orderCreating
+    alt not validated
+   
+    order ->> queue: orderNotValidated
+    queue ->> notification: orderNotValidated
+    else validated
+    order ->> queue: orderValidated
+    queue ->> billing: orderValidated  
+    alt paymentPassed
+    billing ->> queue: paymentPassed
+    queue ->> notification: paymentPassed
+    else not passed
+    billing ->> queue: paymentFailed
+    queue ->> notification: billingFailed
+    end
+   end

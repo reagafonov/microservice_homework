@@ -1,5 +1,6 @@
 post order/{client_id}
 get order/{client_id}/{id}
+PUT order/client_id/{id}/pay
 put order/{client_id}/{id}/add
 put order/{client_id}/{id}/remove
 delete order/{client_id}/{id}

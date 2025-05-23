@@ -1,0 +1,8 @@
+sequenceDiagram
+    user ->> order: POST order/client_id (account_id)
+    order ->> user: order_id
+    user ->> order: PUT order/client_id/id/pay
+    order ->> billing: PUT accout/account_id/pay 
+    billing ->> order: result
+    order ->> notification: notification/{client_id}/send (result)
+    order ->> user: result
