@@ -1,0 +1,46 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: migrate-{{ include "vparking-settings.fullname" . }}
+  {{- with .Values.update.annotations}}
+  annotations:
+    {{- toYaml . | nindent 8 }}
+  {{- end}}
+spec:
+  template:
+  
+    spec:
+      {{- if .Values.extraInitContainers }}
+      initContainers:
+        {{- if .Values.initDbJob}}
+          {{- if .Values.extraInitContainers }}
+          {{- toYaml .Values.extraInitContainers | nindent 6 }}
+          {{- end }}
+        {{- end }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}-migrate
+          image: "{{ .Values.update.repository }}"
+{{/*          command: ["/bin/bash","-c","dotnet tool install --global dotnet-ef --version 8.0.10 && export PATH=\"$PATH:/root/.dotnet/tools\" && dotnet ef database update --project /src/Infrastructure/Infrastructure.EntityFramework --startup-project /src/VParkingSettings/"]*/}}
+          env:
+            - name: "PG_CONNECTION_SERVER"
+              valueFrom:
+                configMapKeyRef:
+                  key: db-server
+                  name: config-map-{{.Values.serviceName}}
+            - name: "PG_CONNECTION_PASSWORD"
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: {{.Values.serviceName}}-secret
+            - name: "PG_CONNECTION_USER"
+              valueFrom:
+                configMapKeyRef:
+                  key: db-username
+                  name: config-map-{{.Values.serviceName}}
+            - name: "PG_ADMIN_PASSWORD"
+              valueFrom:
+                secretKeyRef:
+                  key: postgres-password
+                  name: {{.Values.serviceName}}-secret
+      restartPolicy: Never

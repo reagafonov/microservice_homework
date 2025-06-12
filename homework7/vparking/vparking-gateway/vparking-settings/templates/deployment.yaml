@@ -1,0 +1,108 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "vparking-settings.fullname" . }}
+  {{- with .Values.podAnnotations}}
+  annotations:
+    {{- toYaml . | nindent 8 }}
+  {{- end}}
+  labels:
+    {{- include "vparking-settings.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "vparking-settings.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "vparking-settings.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "vparking-settings.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{include "image.fullName" .}}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+            - name: ssl
+              containerPort: 22
+              protocol: TCP
+          env:
+            - name: "URL"
+              valueFrom:
+                configMapKeyRef:
+                  key: url
+                  name: config-map-settings
+            - name: "REALM"
+              valueFrom:
+                configMapKeyRef:
+                  key: realm
+                  name: config-map-settings
+            - name: "USER_NAME"
+              valueFrom:
+                configMapKeyRef:
+                  key: user_name
+                  name: config-map-settings
+            - name: "USER_PASSWORD"
+              valueFrom:
+                secretKeyRef:
+                  key: keycloak_admin_password
+                  name: settings-secret
+            - name: "ADMIN_CLIENT_ID"
+              valueFrom:
+                configMapKeyRef:
+                  key: admin_client_id
+                  name: config-map-settings
+            - name: "CLIENT_ID" 
+              valueFrom:
+                configMapKeyRef:
+                  key: client_id
+                  name: config-map-settings
+            - name: "CLIENT_SECRET"
+              valueFrom:
+                secretKeyRef:
+                  key: vparking_secret
+                  name: settings-secret
+
+          livenessProbe:
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          {{- with .Values.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

@@ -1,0 +1,29 @@
+{
+    "configurations": [
+        {
+            "name": "Attach to Chrome",
+            "port": 9222,
+            "request": "attach",
+            "type": "chrome",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Kubernetes: Run/Debug",
+            "type": "cloudcode.kubernetes",
+            "request": "launch",
+            "skaffoldConfig": "${workspaceFolder}/skaffold.yaml",
+            "watch": true,
+            "cleanUp": true,
+            "portForward": true,
+            "debug": [
+                {
+                    "image": "vparking-orders",
+                    "containerName": "vparking-orders",
+                    "sourceFileMap": {
+                        "${workspaceFolder}/src": "/"
+                    }
+                }
+            ]
+        }
+    ]
+}

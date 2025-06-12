@@ -1,0 +1,25 @@
+version: '2'
+services:
+  postgresql:
+    image: 'cr.yandex/crpo2q44fm7kalr36b4h/postgresql:11-debian-10'
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - POSTGRESQL_USERNAME=bn_keycloak
+      - POSTGRESQL_DATABASE=bitnami_keycloak
+    volumes:
+      - 'postgresql_data:/bitnami/postgresql'
+
+  keycloak:
+    image: cr.yandex/crpo2q44fm7kalr36b4h/keycloak:26.1.4-debian-12-r0
+    environment:
+      - KEYCLOAK_ADMIN_USER=user
+      - KEYCLOAK_ADMIN_PASSWORD=qwerty
+    depends_on:
+      - postgresql
+    ports:
+      - "80:8080"
+  
+
+volumes:
+  postgresql_data:
+    driver: local

@@ -1,0 +1,30 @@
+﻿{
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "http": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "applicationUrl": "http://localhost:5045",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ADMIN_CLIENT_ID": "admin-cli",
+        "CLIENT_ID": "vparking",
+        "URL": "https://keycloak.keycloak.svc.cluster.local",
+        "USER_NAME": "user",
+        "USER_PASSWORD": "qwerty",
+        "REALM": "vparking",
+        "CLIENT_SECRET": "QS3HIGxQqSHF3cL4XiylS9xZIDqZ1P1S"
+      }
+    },
+    "https": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "applicationUrl": "https://localhost:7009;http://localhost:5045",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
