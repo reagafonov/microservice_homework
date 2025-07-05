@@ -16,4 +16,14 @@
         <PackageReference Include="RestSharp" Version="112.1.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Infrastructure.Queue\obj\Infrastructure.Queue.csproj.nuget.dgspec.json" />
+      <_ContentIncludedByDefault Remove="Infrastructure.Queue\obj\project.assets.json" />
+      <_ContentIncludedByDefault Remove="Infrastructure.Queue\obj\project.packagespec.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Common\src\Common.Infrastructure.Queue\Common.Infrastructure.Queue.csproj" />
+    </ItemGroup>
+
 </Project>

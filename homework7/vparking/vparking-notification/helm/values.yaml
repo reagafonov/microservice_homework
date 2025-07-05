@@ -5,13 +5,15 @@
 # This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
 replicaCount: 1
 
-kafka:
-  Servers: "kafka.keycloak"
-  GroupId: "vparking"
-  Topic: "payment"
+
 
 serviceName: "notification"
 
+kafka:
+  Servers: "kafka"
+  GroupId: "vparking"
+  Topic: "payment"
+  
 initDbJob: true
 startDeployment: true
 gatewayApiName: keycloak
@@ -22,7 +24,7 @@ image:
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
 update: 
-  repository: "vparking-billing-update"
+  repository: "vparking-notification-update"
   # This sets the pull policy for images.
   pullPolicy: IfNotPresent
   annotations: {
@@ -90,7 +92,7 @@ service:
 
 # This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ingress:
-  enabled: false
+  enabled: true
   className: "nginx"
   authenticate: true
   annotations: {
@@ -102,7 +104,7 @@ ingress:
     - host: arch.homework
       paths:
         - pathRegexSuffix: /
-          pathPrefix: /notification
+          pathPrefix: /notifications
           pathType: Prefix
         
   tls: []
@@ -187,6 +189,8 @@ dbAuth:
   password: 9ZuzN0KZHl3
   postgresPassword: "postgres"
   server: "vparking-notification-postgresql"
+  port: 5432
+  database: "notification"
 
 prometheus:
   release: "monitoring"

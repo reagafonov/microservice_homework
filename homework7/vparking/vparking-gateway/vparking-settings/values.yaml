@@ -6,7 +6,11 @@
 replicaCount: 1
 
 
-
+settings_kafka:
+  bootstrap_service: "kafka"
+  port: 9092
+  topic: "new_user"
+  
 # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
 commonTag: ""
 image:
@@ -209,7 +213,7 @@ oauth2-proxy:
       set_xauthrequest = true
       pass_user_headers = true
       pass_access_token = true
-      skip_jwt_bearer_tokens = true
+      skip_jwt_bearer_tokens = false
 kafka: 
 
   fullnameOverride: kafka
@@ -217,6 +221,12 @@ kafka:
     enabled: true
     topics:
       - name: payment
+        partitions: 1
+        replicationFactor: 1
+        config:
+          max.message.bytes: 64000
+          flush.messages: 1
+      - name: new_user
         partitions: 1
         replicationFactor: 1
         config:

@@ -6,7 +6,11 @@
 replicaCount: 1
 
 serviceName: "billing"
-
+kafka:
+  Servers: "kafka"
+  GroupId: "vparking"
+  Topic: "new_user"
+  
 initDbJob: true
 startDeployment: true
 gatewayApiName: keycloak
@@ -182,6 +186,8 @@ dbAuth:
   password: 9ZuzN0KZHl2
   postgresPassword: "postgres"
   server: "vparking-billing-postgresql"
+  port: 5432
+  database: "billing"
 
 prometheus:
   release: "monitoring"
@@ -340,11 +346,7 @@ postgresql:
       scrapeTimeout: 10s
       labels:
         { release: "monitoring" }
-
-
-
-
-
+      
 monitoring:
   enabled: false
 

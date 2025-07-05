@@ -20,7 +20,7 @@
                     "image": "vparking-orders",
                     "containerName": "vparking-orders",
                     "sourceFileMap": {
-                        "${workspaceFolder}/src": "/"
+                        "${workspaceFolder}": "/"
                     }
                 }
             ]

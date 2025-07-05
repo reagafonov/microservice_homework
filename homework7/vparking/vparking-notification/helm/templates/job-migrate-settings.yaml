@@ -28,6 +28,11 @@ spec:
                 configMapKeyRef:
                   key: db-server
                   name: config-map-{{.Values.serviceName}}
+            - name: "PG_CONNECTION_PORT"
+              valueFrom:
+                configMapKeyRef:
+                  key: db-port
+                  name: config-map-{{.Values.serviceName}}
             - name: "PG_CONNECTION_PASSWORD"
               valueFrom:
                 secretKeyRef:
@@ -37,6 +42,11 @@ spec:
               valueFrom:
                 configMapKeyRef:
                   key: db-username
+                  name: config-map-{{.Values.serviceName}}
+            - name: "PG_CONNECTION_DATABASE_NAME"
+              valueFrom:
+                configMapKeyRef:
+                  key: db-name
                   name: config-map-{{.Values.serviceName}}
             - name: "PG_ADMIN_PASSWORD"
               valueFrom:

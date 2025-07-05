@@ -1,0 +1,15 @@
+dependencies:
+- name: vparking-settings
+  repository: ""
+  version: 0.1.0
+- name: vparking-orders
+  repository: ""
+  version: 0.1.0
+- name: vparking-billing
+  repository: ""
+  version: 0.1.0
+- name: vparking-notification
+  repository: ""
+  version: 0.1.0
+digest: sha256:3693cdd5384a6539f117338247a355431a1b40dd9bee073e40d36a81b92b3076
+generated: "2025-07-03T08:00:51.715454+03:00"

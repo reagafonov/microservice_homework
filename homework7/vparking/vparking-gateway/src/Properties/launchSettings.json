@@ -14,7 +14,9 @@
         "USER_NAME": "user",
         "USER_PASSWORD": "qwerty",
         "REALM": "vparking",
-        "CLIENT_SECRET": "QS3HIGxQqSHF3cL4XiylS9xZIDqZ1P1S"
+        "CLIENT_SECRET": "QS3HIGxQqSHF3cL4XiylS9xZIDqZ1P1S",
+        "Kafka_BootstrapServers": "localhost:9092",
+        "Kafka_Topic": "new_user"
       }
     },
     "https": {

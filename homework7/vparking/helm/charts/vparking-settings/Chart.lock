@@ -1,0 +1,12 @@
+dependencies:
+- name: oauth2-proxy
+  repository: ""
+  version: 7.12.12
+- name: keycloak
+  repository: ""
+  version: 24.4.13
+- name: kafka
+  repository: ""
+  version: 32.2.0
+digest: sha256:b1cecb8ecd51a32a6a5979c59676d24a68d9aba578a20b503c198ad887690271
+generated: "2025-07-03T07:59:28.601285+03:00"

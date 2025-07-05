@@ -9,4 +9,6 @@ public class NotificationMessage:IKafkaMessage
     public string ClientID { get; set; }
     
     public string Email { get; set; }
+    
+    public Guid OrderId { get; set; }
 }

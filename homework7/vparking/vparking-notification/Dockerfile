@@ -12,6 +12,7 @@ RUN dotnet restore
 ENV Kafka.BootstrapServers=""
 ENV Kafka.Topic=""
 ENV Kafka.GroupId=""
+ENV PG_CONNECTION_PORT = 5432
 EXPOSE 22
 
 ARG BUILD_CONFIGURATION=Debug

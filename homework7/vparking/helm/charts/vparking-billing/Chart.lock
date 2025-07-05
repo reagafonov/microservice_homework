@@ -1,0 +1,6 @@
+dependencies:
+- name: postgresql
+  repository: ""
+  version: 16.3.5
+digest: sha256:d515e2cdcb4c575b168d138cbbdec2ea18eae96f2f54d2f9dc54b6a038539379
+generated: "2025-05-30T18:11:28.930688+03:00"

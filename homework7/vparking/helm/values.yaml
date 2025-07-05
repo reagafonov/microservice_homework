@@ -1,0 +1,15 @@
+vparking-orders: 
+  postgresql: 
+    commonLabels: 
+      group: orders
+  billingServiceAddress: "http://billing:8080/billing"
+vparking-billing: 
+  fullnameOverride: "billing"
+    
+  postgresql: 
+    commonLabels: 
+      group: billing
+vparking-notification: 
+  postgresql: 
+    commonLabels: 
+      group: notification

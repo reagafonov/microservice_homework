@@ -1,7 +1,11 @@
 using System.Diagnostics;
 using System.Net;
 using AutoMapper;
+using Common.Users;
+using Confluent.Kafka;
+using Consumer.Options;
 using keycloak_userEditor;
+using keycloak_userEditor.Queue;
 using Keycloak.Net;
 using Keycloak.Net.Models.Users;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -9,29 +13,39 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Newtonsoft.Json;
 using RestSharp;
+using Services.Repositories.Abstractions;
 
 
 var builder = WebApplication.CreateBuilder(args);
-var keycloakSection = builder.Configuration;
-var url = keycloakSection.GetValue<string>("URL");
-var userName = keycloakSection.GetValue<string>("USER_NAME");
-var password = keycloakSection.GetValue<string>("USER_PASSWORD");
-var clientID = keycloakSection.GetValue<string>("CLIENT_ID");
-var adminClientID = keycloakSection.GetValue<string>("ADMIN_CLIENT_ID");
-var realmName = keycloakSection.GetValue<string>("REALM");
-var secret = keycloakSection.GetValue<string>("CLIENT_SECRET");
+var configuration = builder.Configuration;
+
+var url = configuration.GetValue<string>("URL");
+var userName = configuration.GetValue<string>("USER_NAME");
+var password = configuration.GetValue<string>("USER_PASSWORD");
+var clientID = configuration.GetValue<string>("CLIENT_ID");
+var adminClientID = configuration.GetValue<string>("ADMIN_CLIENT_ID");
+var realmName = configuration.GetValue<string>("REALM");
+var secret = configuration.GetValue<string>("CLIENT_SECRET");
+
+var kafkaBootstrapServers = configuration["Kafka_BootstrapServers"];
+var kafkaTopic = configuration["Kafka_Topic"];
+
+
+
 Debug.Assert(url != null, nameof(url) + " != null");
 Debug.Assert(userName != null, nameof(userName) + " != null");
 Debug.Assert(password != null, nameof(password) + " != null");
 Debug.Assert(adminClientID != null, nameof(adminClientID) + " != null");
 Debug.Assert(clientID != null, nameof(clientID) + " != null");
 Debug.Assert(realmName != null, nameof(realmName) + " != null");
-Debug.Assert(secret != null, nameof(secret) + " != null");
+Debug.Assert(kafkaBootstrapServers != null, nameof(kafkaBootstrapServers) + " != null");
+Debug.Assert(kafkaTopic != null, nameof(kafkaTopic) + " != null");
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddHealthChecks(); //.AddCheck<RequestTimeHealthCheck>("RequestTimeCheck");;
+builder.Services.AddSingleton<INewUserMessageProducer, NewUserMessageProducer>();
 builder.Services.AddTransient(_ => new KeycloakClient(
     url,
     userName,
@@ -39,6 +53,11 @@ builder.Services.AddTransient(_ => new KeycloakClient(
     new KeycloakOptions(authenticationRealm: "master", adminClientId: adminClientID)
 ));
 
+builder.Services.AddSingleton(new KafkaOptions()
+{
+    BootstrapServers = kafkaBootstrapServers,
+    Topic = kafkaTopic
+});
 
 
 builder.Services.AddAutoMapper(typeof(UserInfo).Assembly);
@@ -54,7 +73,7 @@ if (app.Environment.IsDevelopment())
 
 
 app.MapPost("/users/add", async ([FromBody] UserInfo userInfo, KeycloakClient adminApi, IMapper mapper,
-    ILogger<WebApplication> log, CancellationToken token) =>
+    ILogger<WebApplication> log, INewUserMessageProducer producer, CancellationToken token) =>
 {
     try
     {
@@ -79,6 +98,10 @@ app.MapPost("/users/add", async ([FromBody] UserInfo userInfo, KeycloakClient ad
         }
 
         var user = await adminApi.GetUserAsync(realmName, userId, cancellationToken: token);
+        await producer.ProduceAsync(new NewUserEventMessage()
+        {
+            ClientID = user.UserName
+        });
         return Results.Ok(mapper.Map<UserResult>(user));
     }
     catch (Exception e)
@@ -93,10 +116,7 @@ app.MapGet("/users/me", async (HttpContext context,
     [FromHeader(Name = "X-Auth-Request-Access-Token")] string accessToken,  CancellationToken token) =>
 {
     var (value, error) = await GetUserInfoAsync(accessToken, token);
-    if (error != null)
-        return error;
-
-    return Results.Ok(value);
+    return error ?? Results.Ok(value);
 });
 
 async Task<(UserResult? value, IResult internalServerError1)> GetUserInfoAsync(string accessToken, CancellationToken cancellationToken)

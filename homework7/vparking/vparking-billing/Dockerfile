@@ -3,12 +3,19 @@ ARG BUILD_CONFIGURATION=Debug
 EXPOSE 80
 EXPOSE 22
 
-WORKDIR /src
+WORKDIR /Common/src
+COPY Common/src . 
+
+WORKDIR /vparking/src
 
 COPY vparking-billing/src . 
 
 
 RUN dotnet restore
+
+ENV BILLING_SERVICE_ADDRESS  "localhost"
+ENV PG_CONNECTION_PORT  "5432"
+ENV PG_CONNECTION_SERVER  "localhost"
 
 RUN dotnet build -c $BUILD_CONFIGURATION
 

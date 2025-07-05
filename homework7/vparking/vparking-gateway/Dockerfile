@@ -6,6 +6,7 @@ EXPOSE 8081
 EXPOSE 22
 
 
+
 ENV ADMIN_CLIENT_ID = "admin-cli" 
 ENV CLIENT_ID="vparking"
 
@@ -23,6 +24,10 @@ ARG BUILD_CONFIGURATION=Debug
 WORKDIR /vparking/src
 COPY ["vparking-gateway/src/vparking-users.csproj", "./"]    
 RUN dotnet restore "vparking-users.csproj"
+WORKDIR /Common/src
+COPY Common/src . 
+
+WORKDIR /vparking/src
 COPY vparking-gateway/src .
 
 RUN dotnet build "vparking-users.csproj" -c $BUILD_CONFIGURATION -o /app/build

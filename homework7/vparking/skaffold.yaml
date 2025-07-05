@@ -1,9 +1,11 @@
 apiVersion: skaffold/v4beta12
 kind: Config
 metadata:
-  name: oauth--proxy
+  name: vparking
 
 build:
+  local:
+    push: false
   artifacts:
     - image: vparking-users
       context: .
@@ -68,7 +70,7 @@ deploy:
         version: 0.1.0
       - name: vparking-orders
         chartPath: vparking-order/helm
-        namespace: orders
+        namespace: keycloak
         createNamespace: true
         skipBuildDependencies: true
         valuesFiles:
@@ -76,7 +78,7 @@ deploy:
         version: 0.1.0
       - name: vparking-billing
         chartPath: vparking-billing/helm
-        namespace: billing
+        namespace: keycloak
         createNamespace: true
         skipBuildDependencies: true
         valuesFiles:
@@ -84,7 +86,7 @@ deploy:
         version: 0.1.0
       - name: vparking-notification
         chartPath: vparking-notification/helm
-        namespace: notification
+        namespace: keycloak
         createNamespace: true
         skipBuildDependencies: true
         valuesFiles:
