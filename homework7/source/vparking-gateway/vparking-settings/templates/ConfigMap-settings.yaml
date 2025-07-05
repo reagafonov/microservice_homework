@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-map-settings
+  {{- with .Values.podAnnotations}}
+  annotations:
+    {{- toYaml . | nindent 8 }}
+  {{- end}}
+data:
+  admin_client_id: "{{.Values.userService.admin_client_id}}"
+  client_id: "{{.Values.userService.client_id}}"
+  url: "{{.Values.userService.url}}"
+  user_name:  "{{.Values.userService.user_name}}"
+  realm:  "{{.Values.userService.realm}}"
+  kafka-bootstrap_services: "{{.Values.settings_kafka.bootstrap_service}}"
+  kafka-topic: "{{.Values.settings_kafka.topic}}"
+  

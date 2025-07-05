@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-map-{{.Values.serviceName}}
+  {{- with .Values.podAnnotations}}
+  annotations:
+    {{- toYaml . | nindent 8 }}
+  {{- end}}
+data:
+  hello-world: "hello"
+  db-username: "{{.Values.dbAuth.username}}"
+  db-server: "{{.Values.dbAuth.server}}"
+  db-port: "{{.Values.dbAuth.port}}"
+  db-name: "{{.Values.dbAuth.database}}"
+  swagger-prefix: "{{.Values.serviceName}}/swagger"
+  kafka-address: "{{.Values.kafka.Servers}}"
+  kafka-topic: "{{.Values.kafka.Topic}}"
+  kafka-groupid: "{{.Values.kafka.GroupId}}"
+
+  

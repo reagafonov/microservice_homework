@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="AutoMapper" Version="13.0.1" />
+      <PackageReference Include="Confluent.Kafka" Version="2.10.1" />
+      <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\Common\src\Common.Abstractions\Common.Abstractions.csproj" />
+      <ProjectReference Include="..\..\..\Common\src\Common.Infrastructure.Queue\Common.Infrastructure.Queue.csproj" />
+      <ProjectReference Include="..\Domain\Domain.Entities\Domain.Entities.csproj" />
+      <ProjectReference Include="..\Services\Services.Abstractions\Services.Abstractions.csproj" />
+    </ItemGroup>
+
+</Project>

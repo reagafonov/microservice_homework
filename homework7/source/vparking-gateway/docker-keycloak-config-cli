@@ -1,0 +1,1 @@
+FROM docker.io/bitnami/keycloak-config-cli:6.4.0-debian-12-r0

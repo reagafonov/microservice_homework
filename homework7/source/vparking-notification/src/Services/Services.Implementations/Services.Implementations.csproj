@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <AssemblyName>Services.Implementations</AssemblyName>
+        <RootNamespace>Services.Implementations</RootNamespace>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="AutoMapper" Version="13.0.1"/>
+        <PackageReference Include="FluentValidation" Version="11.10.0"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\..\Common\src\Common.Abstractions\Common.Abstractions.csproj" />
+        <ProjectReference Include="..\..\Domain\Domain.Entities\Domain.Entities.csproj"/>
+        <ProjectReference Include="..\..\Infrastructure.Email\Infrastructure.Email.csproj" />
+        <ProjectReference Include="..\Services.Repositories.Abstractions\Services.Repositories.Abstractions.csproj"/>
+        <ProjectReference Include="..\Services.Abstractions\Services.Abstractions.csproj"/>
+    </ItemGroup>
+
+</Project>
