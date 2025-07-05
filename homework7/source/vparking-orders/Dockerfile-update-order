@@ -6,7 +6,7 @@ WORKDIR /Common/src
 COPY Common/src . 
 
 WORKDIR /vparking/src
-COPY vparking-order/src .
+COPY vparking-orders/src .
 
 RUN dotnet restore
 

@@ -15,12 +15,12 @@ build:
     - image: vparking-orders
       context: .
       docker:
-        dockerfile: vparking-order/Dockerfile-order
+        dockerfile: vparking-orders/Dockerfile-order
       
     - image: vparking-orders-update
       context: .
       docker:
-        dockerfile: vparking-order/Dockerfile-update-order
+        dockerfile: vparking-orders/Dockerfile-update-order
          
     - image: vparking-billing
       context: .

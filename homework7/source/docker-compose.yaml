@@ -96,7 +96,7 @@ services:
     image: "vparking-orders-update"
     build:
       context: .
-      dockerfile: ./vparking-order/Dockerfile-update-order
+      dockerfile: ./vparking-orders/Dockerfile-update-order
     environment:
       "ASPNETCORE_ENVIRONMENT": "Development"
       "PG_CONNECTION_SERVER": "db_orders"
@@ -150,7 +150,7 @@ services:
       - 8080:8080
     build:
       context: .
-      dockerfile: ./vparking-order/Dockerfile-order
+      dockerfile: ./vparking-orders/Dockerfile-order
     environment:
       "ASPNETCORE_ENVIRONMENT": "Development"
       "PG_CONNECTION_SERVER": "db_orders"

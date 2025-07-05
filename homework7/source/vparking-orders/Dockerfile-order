@@ -8,8 +8,8 @@ COPY Common/src .
 
 ENV BILLING_SERVICE_ADDRESS = ""
 
-WORKDIR /vparking-order/src
-COPY vparking-order/src .
+WORKDIR /vparking-orders/src
+COPY vparking-orders/src .
 
 RUN dotnet restore
 
