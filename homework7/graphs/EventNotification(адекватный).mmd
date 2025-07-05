@@ -1,7 +1,7 @@
 sequenceDiagram
     user ->> order: POST order/client_id (account_id)
     order ->> user: order_id
-    user ->> order: PUT order/client_id/id/pay
+    user ->> order: PUT order/client_id/pay
     order ->> billing: PUT accout/account_id/pay
     billing ->> order: result
     order ->> queue: message: clinet:client_id text:text

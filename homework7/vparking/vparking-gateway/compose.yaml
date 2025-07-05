@@ -1,6 +1,0 @@
-﻿services:
-  keycloak_usereditor:
-    image: keycloak_usereditor
-    build:
-      context: .
-      dockerfile: Dockerfile

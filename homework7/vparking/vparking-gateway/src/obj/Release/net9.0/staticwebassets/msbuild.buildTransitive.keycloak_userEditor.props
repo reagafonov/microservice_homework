@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="../buildMultiTargeting/keycloak_userEditor.props" />
-</Project>
