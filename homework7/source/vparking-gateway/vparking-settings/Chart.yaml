@@ -24,8 +24,9 @@ version: 0.1.0
 appVersion: "1.16.0"
 
 dependencies:
-#  - name: oauth2-proxy
-#    version: 7.12.12
+  - name: oauth2-proxy
+    version: 7.12.12
   - name: keycloak
     version: 24.4.13
-
+  - name: kafka
+    version: 32.2.0

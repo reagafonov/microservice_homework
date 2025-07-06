@@ -16,12 +16,12 @@ startDeployment: true
 gatewayApiName: keycloak
 # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
 image:
-  repository: vparking-billing
+  repository: cr.yandex/crpo2q44fm7kalr36b4h/vparking-billing:v10
   # This sets the pull policy for images.
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
 update: 
-  repository: "vparking-billing-update"
+  repository: "cr.yandex/crpo2q44fm7kalr36b4h/vparking-billing-update"
   # This sets the pull policy for images.
   pullPolicy: IfNotPresent
   annotations: {
@@ -193,6 +193,7 @@ prometheus:
   release: "monitoring"
     
 postgresql:
+  
   primary:
     extendedConfiguration: |
       shared_preload_libraries = 'pg_stat_statements'  
@@ -208,7 +209,10 @@ postgresql:
   passwordUpdateJob:
     enabled: true
   fullnameOverride: "vparking-billing-postgresql"
-  commonLabels: { release: "monitoring" }
+  commonLabels: { 
+    release: "monitoring",
+  }
+  group_id: "billing"
   metrics:
     enabled: false
     customMetrics:

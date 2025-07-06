@@ -1,0 +1,6 @@
+1) из исходников
+cd source
+skaffold run
+2) из релизной версии
+cd release
+helm install vparking ./helm --namespace keycloak --create-namespace

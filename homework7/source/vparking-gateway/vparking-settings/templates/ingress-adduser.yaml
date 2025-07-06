@@ -20,7 +20,7 @@ spec:
             pathType: ImplementationSpecific
             backend:
               service:
-                name:  {{ include "vparking-settings.fullname" . }}
+                name: {{ include "vparking-settings.fullname" . }}
                 port:
                   number: 8080
           
