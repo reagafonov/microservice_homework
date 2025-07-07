@@ -1,4 +1,4 @@
-FROM cr.yandex/crpo2q44fm7kalr36b4h/dotnet-ef-9:v2 AS sdk
+FROM cr.yandex/crpo2q44fm7kalr36b4h/sdk9 AS sdk
 EXPOSE 80
 
 WORKDIR /Common/src

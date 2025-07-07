@@ -38,7 +38,7 @@ extraInitContainers:
       - |
         until nc -z vparking-billing-postgresql 5432 &> /dev/null          
          do
-           echo "waiting for vparking-orders-postgresql container..."
+           echo "waiting for vparking-billing-postgresql container..."
            sleep 2
          done
     

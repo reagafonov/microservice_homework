@@ -1,4 +1,5 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
+﻿#FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
+FROM cr.yandex/crpo2q44fm7kalr36b4h/asp9 AS base 
 RUN apt-get update && apt-get install -y unzip procps curl bash openssh-server &&  rm -rf /var/lib/apt/lists/*
 RUN echo 'root:qwerty' | chpasswd
 RUN echo "PasswordAuthentication yes" >> /etc/ssh/sshd_config

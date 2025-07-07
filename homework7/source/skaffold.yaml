@@ -69,12 +69,12 @@ deploy:
           - vparking-gateway/vparking-settings/values.yaml
         version: 0.1.0
       - name: vparking-orders
-        chartPath: vparking-order/helm
+        chartPath: vparking-orders/helm
         namespace: keycloak
         createNamespace: true
         skipBuildDependencies: true
         valuesFiles:
-          - vparking-order/helm/values.yaml
+          - vparking-orders/helm/values.yaml
         version: 0.1.0
       - name: vparking-billing
         chartPath: vparking-billing/helm

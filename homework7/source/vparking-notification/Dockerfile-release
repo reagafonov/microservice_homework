@@ -1,21 +1,21 @@
 FROM cr.yandex/crpo2q44fm7kalr36b4h/sdk9 AS sdk
-ARG BUILD_CONFIGURATION=Debug
 EXPOSE 80
-EXPOSE 22
 
 WORKDIR /Common/src
 COPY Common/src . 
 
 WORKDIR /vparking/src
-
-COPY vparking-billing/src . 
-
+COPY vparking-notification/src .
 
 RUN dotnet restore
 
-ENV BILLING_SERVICE_ADDRESS  "localhost"
-ENV PG_CONNECTION_PORT  "5432"
-ENV PG_CONNECTION_SERVER  "localhost"
+ENV Kafka.BootstrapServers=""
+ENV Kafka.Topic=""
+ENV Kafka.GroupId=""
+ENV PG_CONNECTION_PORT = 5432
+EXPOSE 22
+
+ARG BUILD_CONFIGURATION=Release
 
 RUN dotnet build -c $BUILD_CONFIGURATION
 
@@ -25,4 +25,4 @@ FROM cr.yandex/crpo2q44fm7kalr36b4h/asp9 as final
 WORKDIR /app
 COPY --from=sdk /app/publish .
 
-ENTRYPOINT  ["bash","-c", "/etc/init.d/ssh start && dotnet VParkingBilling.dll"]     
+ENTRYPOINT  ["dotnet", "VParkingNotification.dll"]     
