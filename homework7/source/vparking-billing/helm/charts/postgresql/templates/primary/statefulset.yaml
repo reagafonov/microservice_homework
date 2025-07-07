@@ -10,10 +10,8 @@ metadata:
   name: {{ include "postgresql.v1.primary.fullname" . }}
   namespace: {{ include "common.names.namespace" . | quote }}
   {{- $labels := include "common.tplvalues.merge" ( dict "values" ( list .Values.primary.labels .Values.commonLabels ) "context" . ) }}
-  labels: 
-    {{- include "common.labels.standard" ( dict "customLabels" $labels "context" $ ) | nindent 2 }}
+  labels: {{- include "common.labels.standard" ( dict "customLabels" $labels "context" $ ) | nindent 4 }}
     app.kubernetes.io/component: primary
-    group: {{.Values.group_id}}
   {{- if or .Values.commonAnnotations .Values.primary.annotations }}
   {{- $annotations := include "common.tplvalues.merge" ( dict "values" ( list .Values.primary.annotations .Values.commonAnnotations ) "context" . ) }}
   annotations: {{- include "common.tplvalues.render" ( dict "value" $annotations "context" $) | nindent 4 }}

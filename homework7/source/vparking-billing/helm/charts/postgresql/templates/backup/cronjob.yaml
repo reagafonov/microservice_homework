@@ -13,7 +13,6 @@ metadata:
   {{- $labels := include "common.tplvalues.merge" ( dict "values" ( list .Values.backup.cronjob.labels .Values.commonLabels ) "context" . ) }}
   labels: {{- include "common.labels.standard" ( dict "customLabels" $labels "context" $ ) | nindent 4 }}
     app.kubernetes.io/component: pg_dumpall
-    group: {{.Values.group_id}}
   {{- $annotations := include "common.tplvalues.merge" ( dict "values" ( list .Values.backup.cronjob.annotations .Values.commonAnnotations ) "context" . ) }}
   {{- if $annotations }}
   annotations: {{- include "common.tplvalues.render" ( dict "value" $annotations "context" $) | nindent 4 }}

@@ -82,9 +82,6 @@ extraDeploy: []
 ## @param commonLabels Add labels to all the deployed resources
 ##
 commonLabels: {}
-
-group_id: ""
-
 ## @param commonAnnotations Add annotations to all the deployed resources
 ##
 commonAnnotations: {}

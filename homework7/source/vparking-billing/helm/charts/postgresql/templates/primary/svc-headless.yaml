@@ -10,7 +10,6 @@ metadata:
   namespace: {{ include "common.names.namespace" . | quote }}
   labels: {{- include "common.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 }}
     app.kubernetes.io/component: primary
-    group: {{.Values.group_id}}
   annotations:
     {{- if or .Values.primary.service.headless.annotations .Values.commonAnnotations }}
     {{- $annotations := include "common.tplvalues.merge" ( dict "values" ( list .Values.primary.service.headless.annotations .Values.commonAnnotations ) "context" . ) }}
@@ -30,4 +29,3 @@ spec:
   {{- $podLabels := include "common.tplvalues.merge" ( dict "values" ( list .Values.primary.podLabels .Values.commonLabels ) "context" . ) }}
   selector: {{- include "common.labels.matchLabels" ( dict "customLabels" $podLabels "context" $ ) | nindent 4 }}
     app.kubernetes.io/component: primary
-    group: {{.Values.group_id}}
