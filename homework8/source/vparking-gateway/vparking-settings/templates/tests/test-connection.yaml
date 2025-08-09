@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "vparking-settings.fullname" . }}-test-connection"
+  labels:
+    {{- include "vparking-settings.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: cr.yandex/crpo2q44fm7kalr36b4h/bosybox 
+      command: ['wget']
+      args: ['{{ include "vparking-settings.fullname" . }}:{{ .Values.service.port }}']
+  restartPolicy: Never

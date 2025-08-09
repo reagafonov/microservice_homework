@@ -1,0 +1,11 @@
+локальный запуск
+ docker compose up -d --build
+релизная версия без дебага
+ docker compose up -d -f docker-compose-release.yaml 
+запуск minikube
+  minikube start && minikube addons enable ingress
+запуск в kubernetes
+ skaffold run
+тесты
+ newman run --global-var "baseUrl=https://arch.homework/" payments.json --insecure
+ 

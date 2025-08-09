@@ -1,0 +1,1 @@
+FROM registry.k8s.io/custom-repo/custom-image:v1.0.0-dev

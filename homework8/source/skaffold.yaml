@@ -1,0 +1,95 @@
+apiVersion: skaffold/v4beta12
+kind: Config
+metadata:
+  name: vparking
+
+build:
+  
+  artifacts:
+    - image: vparking-users
+      context: .
+      docker:
+        dockerfile: vparking-gateway/Dockerfile
+        
+    - image: vparking-orders
+      context: .
+      docker:
+        dockerfile: vparking-orders/Dockerfile-order
+      
+    - image: vparking-orders-update
+      context: .
+      docker:
+        dockerfile: vparking-orders/Dockerfile-update-order
+         
+    - image: vparking-billing
+      context: .
+      docker:
+        dockerfile: vparking-billing/Dockerfile
+        
+    - image: vparking-billing-update
+      context: .
+      docker:
+        dockerfile:  vparking-billing/Dockerfile-update
+        
+    - image: vparking-notification
+      context: .
+      docker:
+        dockerfile: vparking-notification/Dockerfile
+        
+    - image: vparking-notification-update
+      context: .
+      docker:
+        dockerfile: vparking-notification/Dockerfile-update
+  local:
+    push: false
+    concurrency: 3
+deploy:
+  helm:
+    releases:
+#      - name: prometheus
+#        chartPath: kube-prometheus-stack
+#        namespace: monitoring
+#        createNamespace: true
+#        skipBuildDependencies: true
+#        valuesFiles:
+#            - kube-prometheus-stack/values.yaml
+#      - name: ingress
+#        chartPath: ingress-nginx
+#        namespace: nginx-ingress
+#        createNamespace: true
+#        skipBuildDependencies: true
+#        valuesFiles:
+#            - ingress-nginx/values.yaml
+#            - ingress-nginx/nginx-metrix-new.yaml
+      - name: vparking-settings
+        chartPath: vparking-gateway/vparking-settings
+        namespace: keycloak
+        createNamespace: true
+        skipBuildDependencies: true
+        valuesFiles:
+          - vparking-gateway/vparking-settings/values.yaml
+        version: 0.1.0
+      - name: vparking-orders
+        chartPath: vparking-orders/helm
+        namespace: keycloak
+        createNamespace: true
+        skipBuildDependencies: true
+        valuesFiles:
+          - vparking-orders/helm/values.yaml
+        version: 0.1.0
+      - name: vparking-billing
+        chartPath: vparking-billing/helm
+        namespace: keycloak
+        createNamespace: true
+        skipBuildDependencies: true
+        valuesFiles:
+           - vparking-billing/helm/values.yaml
+        version: 0.1.0
+      - name: vparking-notification
+        chartPath: vparking-notification/helm
+        namespace: keycloak
+        createNamespace: true
+        skipBuildDependencies: true
+        valuesFiles:
+          - vparking-notification/helm/values.yaml
+        version: 0.1.0
