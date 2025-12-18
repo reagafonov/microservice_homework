@@ -5,6 +5,7 @@ services:
     container_name: broker
     ports:
       - 9092:9092
+      - 29092:29092
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,CONTROLLER:PLAINTEXT
@@ -35,14 +36,14 @@ services:
     command: |
       "
       # blocks until kafka is reachable
-      kafka-topics --bootstrap-server kafka:29092 --list
+      kafka-topics --bootstrap-server broker:29092 --list
       
       echo -e 'Creating kafka topics'
-      kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists --topic new_user --replication-factor 1 --partitions 1
-      kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists --topic payment --replication-factor 1 --partitions 1
+      kafka-topics --bootstrap-server broker:29092 --create --if-not-exists --topic new_user --replication-factor 1 --partitions 1
+      kafka-topics --bootstrap-server broker:29092 --create --if-not-exists --topic payment --replication-factor 1 --partitions 1
       
       echo -e 'Successfully created the following topics:'
-      kafka-topics --bootstrap-server kafka:29092 --list
+      kafka-topics --bootstrap-server broker:29092 --list
       "
   db_orders:
     image: postgres:17.2-bookworm
@@ -183,7 +184,7 @@ services:
       "PG_CONNECTION_USER": "postgres"
       "PG_CONNECTION_DATABASE_NAME": "billing"
       "SWAGGER_PREFIX": "billing/swagger"
-      "KAFKA_ADDRESS": "broker:9092"
+      "KAFKA_ADDRESS": "broker:29092"
       "KAFKA_TOPIC_NAME": "new_user"
       "KAFKA_GROUP_ID": "vparking"
     depends_on:

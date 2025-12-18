@@ -1,7 +1,7 @@
 локальный запуск
  docker compose up -d --build
 релизная версия без дебага
- docker compose up -d -f docker-compose-release.yaml 
+ docker compose -f docker-compose-release.yaml  up -d --build
 запуск minikube
   minikube start && minikube addons enable ingress
 запуск в kubernetes
