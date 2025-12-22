@@ -1,45 +1,30 @@
-{{- /*
-Copyright Broadcom, Inc. All Rights Reserved.
-SPDX-License-Identifier: APACHE-2.0
-*/}}
-
-{{- $replicaCount := int .Values.broker.replicaCount }}
-{{- if gt $replicaCount 0 }}
+{{- $svcValues := .Values.broker.service }}
+{{- $thisFullName := include "kafka.broker.headless.serviceName" . }}
+{{- $componet := include "kafka.broker.componet" . }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ printf "%s-headless" (include "kafka.broker.fullname" .) | trunc 63 | trimSuffix "-" }}
-  namespace: {{ include "common.names.namespace" . | quote }}
-  {{- $labels := include "common.tplvalues.merge" ( dict "values" ( list .Values.externalAccess.broker.service.labels .Values.commonLabels ) "context" . ) }}
-  labels: {{- include "common.labels.standard" ( dict "customLabels" $labels "context" $ ) | nindent 4 }}
-    app.kubernetes.io/component: broker
-    app.kubernetes.io/part-of: kafka
-  {{- if or .Values.service.headless.broker.annotations .Values.commonAnnotations }}
-  {{- $annotations := include "common.tplvalues.merge" ( dict "values" ( list .Values.service.headless.broker.annotations .Values.commonAnnotations ) "context" . ) }}
-  annotations: {{- include "common.tplvalues.render" ( dict "value" $annotations "context" $) | nindent 4 }}
-  {{- end }}
+  name: {{ $thisFullName }}
+  labels:
+    {{- include "kafka.labels" . | nindent 4 }}
+    component: {{ $componet | quote }}
 spec:
   type: ClusterIP
   clusterIP: None
+  {{- if .Values.broker.combinedMode.enabled }}
   publishNotReadyAddresses: true
+  {{- end }}
   ports:
-    - name: tcp-interbroker
-      port: {{ .Values.service.ports.interbroker }}
+    - port: {{ .Values.broker.service.port }}
+      targetPort: broker
       protocol: TCP
-      targetPort: interbroker
-    - name: tcp-client
-      port: {{ .Values.service.ports.client }}
+      name: broker
+    {{- if .Values.broker.combinedMode.enabled }}
+    - port: {{ .Values.controller.service.port }}
+      targetPort: controller
       protocol: TCP
-      targetPort: client
-  {{- $podLabels := include "common.tplvalues.merge" ( dict "values" ( list .Values.broker.podLabels .Values.commonLabels ) "context" . ) }}
-  selector: {{- include "common.labels.matchLabels" ( dict "customLabels" $podLabels "context" $ ) | nindent 4 }}
-    app.kubernetes.io/component: broker
-    app.kubernetes.io/part-of: kafka
-  {{- with .Values.service.headless.ipFamilyPolicy }}
-  ipFamilyPolicy: {{ . | quote }}
-  {{- end }}
-  {{- with .Values.service.headless.ipFamilies }}
-  ipFamilies:
-  {{- . | toYaml | nindent 2 }}
-  {{- end }}
-{{- end }}
+      name: controller
+    {{- end }}
+  selector:
+    {{- include "kafka.selectorLabels" . | nindent 4 }}
+    component: {{ $componet | quote }}

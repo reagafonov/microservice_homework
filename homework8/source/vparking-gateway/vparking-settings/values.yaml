@@ -217,6 +217,7 @@ oauth2-proxy:
 kafka: 
 
   fullnameOverride: kafka
+  
   provisioning: 
     enabled: true
     topics:
@@ -239,6 +240,13 @@ kafka:
       protocol: PLAINTEXT
     interbroker: 
       protocol: PLAINTEXT
+  
+  broker: 
+    readinessProbe: 
+      timeoutSeconds: 10
+    livenessProbe: 
+      timeoutSeconds: 10
+
       
       
   

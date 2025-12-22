@@ -1,8 +1,8 @@
-{{- $thisValues := .Values.broker }}
-{{- $thisFullName := include "kafka.broker.fullname" . }}
-{{- $componet := include "kafka.broker.componet" . }}
-{{- $brokerFullName := $thisFullName }}
-{{- $brokerPort := .Values.containerPort.broker }}
+{{- if not .Values.broker.combinedMode.enabled }}
+{{- $thisValues := .Values.controller }}
+{{- $thisFullName := include "kafka.controller.fullname" . }}
+{{- $controllerFullName := include "kafka.controller.fullname" . }}
+{{- $componet := "controller" }}
 {{- $antiAffinityTopologyKey := default "kubernetes.io/hostname" $thisValues.antiAffinityTopologyKey }}
 ---
 apiVersion: apps/v1
@@ -20,7 +20,7 @@ spec:
     matchLabels:
       {{- include "kafka.selectorLabels" . | nindent 6 }}
       component: {{ $componet | quote }}
-  serviceName: {{ include "kafka.broker.headless.serviceName" . }}
+  serviceName: {{ include "kafka.controller.headless.serviceName" . }}
   updateStrategy:
     type: {{ ( $thisValues.updateStrategy | default dict ).type | default "RollingUpdate" }}
   template:
@@ -41,10 +41,14 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "kafka.serviceAccountName" . }}
+      {{- with $thisValues.podSecurityContext }}
       securityContext:
         {{- toYaml $thisValues.podSecurityContext | nindent 8 }}
+      {{- end }}
+      {{- if or (eq $thisValues.antiAffinity "hard") (eq $thisValues.antiAffinity "soft") $thisValues.nodeAffinity }}
       affinity:
-      {{- if eq ($thisValues.antiAffinity | lower) "hard" }}
+      {{- end }}
+      {{- if eq $thisValues.antiAffinity "hard" }}
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
           - labelSelector:
@@ -52,7 +56,7 @@ spec:
                 {{- include "kafka.selectorLabels" . | nindent 18 }}
                 component: {{ $componet | quote }}
             topologyKey: {{ $antiAffinityTopologyKey | quote }}
-      {{- else }}
+      {{- else if eq $thisValues.antiAffinity "soft" }}
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
           - weight: 5
@@ -78,29 +82,17 @@ spec:
         imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
       {{- end }}
         env:
-          {{- include "kafka.broker.containerEnv" . | nindent 8 }}
-        #- name: KAFKA_CFG_ADVERTISED_LISTENERS
-        #  value: "foo"
+        {{- include "kafka.controller.containerEnv" . | nindent 8 }}
         ports:
-          {{- include "kafka.broker.containerPorts" . | nindent 8 }}
-        livenessProbe:
-        
-          exec:
-            command:
-            - sh
-            - -c
-            - "bin/kafka-broker-api-versions.sh --bootstrap-server=127.0.0.1:{{ $brokerPort }}"
+        - containerPort: {{ .Values.containerPort.controller }}
+          name: controller
+          protocol: TCP
         {{- with $thisValues.livenessProbe }}
+        livenessProbe:
           {{- toYaml . | nindent 10 }}
         {{- end }}
-        readinessProbe:
-          
-          exec:
-            command:
-            - sh
-            - -c
-            - "bin/kafka-broker-api-versions.sh --bootstrap-server=127.0.0.1:{{ $brokerPort }}"
         {{- with $thisValues.readinessProbe }}
+        readinessProbe:
           {{- toYaml . | nindent 10 }}
         {{- end }}
         {{- with $thisValues.resources }}
@@ -153,3 +145,4 @@ spec:
           requests:
             storage: {{ $thisValues.persistence.size | quote }}
   {{- end }}
+{{- end }}
