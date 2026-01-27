@@ -10,12 +10,12 @@ build:
       context: .
       docker:
         dockerfile: vparking-gateway/Dockerfile
-        
+
     - image: vparking-orders
       context: .
       docker:
         dockerfile: vparking-orders/Dockerfile-order
-      
+
     - image: vparking-orders-update
       context: .
       docker:
@@ -25,17 +25,17 @@ build:
       context: .
       docker:
         dockerfile: vparking-billing/Dockerfile
-        
+
     - image: vparking-billing-update
       context: .
       docker:
         dockerfile:  vparking-billing/Dockerfile-update
-        
+
     - image: vparking-notification
       context: .
       docker:
         dockerfile: vparking-notification/Dockerfile
-        
+
     - image: vparking-notification-update
       context: .
       docker:

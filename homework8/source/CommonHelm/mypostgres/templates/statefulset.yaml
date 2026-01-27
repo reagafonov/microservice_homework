@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: "{{.Release.Name}}postgresql"
+  namespace:  {{.Release.Namespace}}
+spec:
+  replicas: 1
+  serviceName:  "vparking-{{.Release.Name}}postgresql"
+  selector:
+    matchLabels: 
+      env: {{.Release.Name}}-{{.Values.environment}}
+  template:
+    metadata:
+      namespace: {{.Values.namespace}}
+      labels: 
+        env: {{.Release.Name}}-{{.Values.environment}}
+    spec:
+          containers:
+            - name: {{.Release.Name}}postgresql
+              image: mypostgresqlalt
+              env:
+
+                - name: POSTGRES_PASSWORD
+                  valueFrom:
+                    configMapKeyRef:
+                      key: postgresAdminPassword
+                      name: {{.Release.Name}}-config-map
+                - name: POSTGRES_CREATE_USER
+                  valueFrom:
+                    configMapKeyRef:
+                      key: postgresUser
+                      name:  {{.Release.Name}}-config-map
+                - name: POSTGRES_CREATE_USER_PASSWORD
+                  valueFrom:
+                    configMapKeyRef:
+                      key: postgresUserPassword
+                      name:  {{.Release.Name}}-config-map
+                - name: POSTGRES_DB
+                  valueFrom:
+                    configMapKeyRef:
+                      key: postgresDb
+                      name:  {{.Release.Name}}-config-map
+
+              ports:
+                - containerPort: 5432
+              volumeMounts:
+                - name: volume
+                  mountPath: /var/lib/pgsql
+    
+  volumeClaimTemplates:
+    - metadata:
+        name: volume
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi
+            
+    

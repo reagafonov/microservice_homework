@@ -1,6 +1,6 @@
 dependencies:
-- name: postgresql
-  repository: ""
-  version: 16.3.5
-digest: sha256:d515e2cdcb4c575b168d138cbbdec2ea18eae96f2f54d2f9dc54b6a038539379
-generated: "2025-05-30T18:11:28.930688+03:00"
+- name: mypostgres
+  repository: https://gitverse.ru/api/packages/reagafonov/helm
+  version: 0.1.2
+digest: sha256:81cfc33afea0f9adbcec610c2d86717e1775dd8410318f3da89a38bbb869342f
+generated: "2026-01-27T14:06:32.303564+03:00"

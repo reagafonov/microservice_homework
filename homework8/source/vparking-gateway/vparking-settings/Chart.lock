@@ -7,6 +7,6 @@ dependencies:
   version: 24.4.13
 - name: kafka
   repository: ""
-  version: 32.2.0
-digest: sha256:b1cecb8ecd51a32a6a5979c59676d24a68d9aba578a20b503c198ad887690271
-generated: "2025-07-03T07:59:28.601285+03:00"
+  version: 13.1.0
+digest: sha256:36212e938fce14fcd99a38377c12585439e3ff433ba43f5abfc4c60d2d6726d3
+generated: "2026-01-25T20:43:12.506842+03:00"

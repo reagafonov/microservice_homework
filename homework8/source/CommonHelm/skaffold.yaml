@@ -1,0 +1,22 @@
+apiVersion: skaffold/v4beta12
+kind: Config
+metadata:
+  name: commonhelm
+build:
+  artifacts:
+    - image: mypostgresqlalt
+      context: Docker/mypostgresqlalt
+      docker:
+        dockerfile: Dockerfile-skaffold
+    - image: mypostgresqlalt-init
+      context: Docker/mypostgresqlalt_init
+      docker:
+        dockerfile: Dockerfile-skaffold
+deploy:
+  helm:
+    releases:
+      - name: mypostgres
+        chartPath: mypostgres
+        valuesFiles:
+          - mypostgres/values.yaml
+        version: 1.0.0

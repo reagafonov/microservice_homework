@@ -1,0 +1,48 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{.Release.Name}}-db-init
+spec:
+  template:
+    spec:
+      initContainers:
+        - name: check-db
+          image: busybox
+          command:
+            - sh
+            - -c
+            - |
+              until nc -z {{.Release.Name}}{{.Values.serviceName}} 5432 &> /dev/null          
+               do
+                 echo "waiting for {{.Release.Name}}{{.Values.serviceName}} container..."
+                 sleep 2
+               done
+          
+      containers:
+        - name: {{.Release.Name}}-update-db
+          image: mypostgresqlalt-init
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  key: postgresAdminPassword
+                  name: {{.Release.Name}}-config-map
+            - name: POSTGRES_CREATE_USER
+              valueFrom:
+                configMapKeyRef:
+                  key: postgresUser
+                  name:  {{.Release.Name}}-config-map
+            - name: POSTGRES_CREATE_USER_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  key: postgresUserPassword
+                  name:  {{.Release.Name}}-config-map
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  key: postgresDb
+                  name: {{.Release.Name}}-config-map
+            - name: POSTGRES_SERVER
+              value: {{.Release.Name}}{{.Values.serviceName}}
+      restartPolicy: Never
+          

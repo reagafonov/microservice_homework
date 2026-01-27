@@ -1,0 +1,12 @@
+FROM alt:p11 AS alt
+ENV POSTGRES_PASSWORD='postgres'
+ENV POSTGRES_CREATE_USER ='user'
+ENV POSTGRES_CREATE_USER_PASSWORD='user_pwd'
+ENV POSTGRES_DB = 'db'
+RUN apt-get update && apt-get install postgresql17-server  -y && mkdir /run/pgsql && chown postgres:postgres /run/pgsql 
+COPY entrypoint.sh /run/pgsql
+RUN chown -R "postgres:postgres" /run/pgsql/
+USER postgres
+RUN chmod +x /run/pgsql/entrypoint.sh
+EXPOSE 5432
+ENTRYPOINT /run/pgsql/entrypoint.sh

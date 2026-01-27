@@ -1,0 +1,7 @@
+FROM alpine:3.23.2 AS alpine
+ENV POSTGRES_PASSWORD='postgres'
+RUN apk add postgresql17 --no-cache && mkdir /run/postgresql && chown postgres:postgres /run/postgresql 
+USER postgres
+RUN cd && mkdir /var/lib/postgresql/data && chmod 0700 /var/lib/postgresql/data && initdb -D /var/lib/postgresql/data && echo " host all all 0.0.0.0/0 md5" >> /var/lib/postgresql/data/pg_hba.conf && echo "listen_addresses='*'" >> /var/lib/postgresql/data/postgresql.conf && sed -i "s|^#* *unix_socket_directories.*$|unix_socket_directories=\'/tmp\'|" /var/lib/postgresql/data/postgresql.conf 
+EXPOSE 5432
+ENTRYPOINT echo "postgres:$POSTGRES_PASSWORD" | chpasswd && postgres -D /var/lib/postgresql/data

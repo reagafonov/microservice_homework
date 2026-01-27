@@ -5,6 +5,8 @@
 # This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
 replicaCount: 1
 
+kafkaName: kafka-broker
+
 serviceName: "billing"
 kafka:
   Servers: "kafka"
@@ -21,7 +23,7 @@ image:
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
 update: 
-  repository: "cr.yandex/crpo2q44fm7kalr36b4h/vparking-billing-update"
+  repository: "vparking-billing-update"
   # This sets the pull policy for images.
   pullPolicy: IfNotPresent
   annotations: {
@@ -36,22 +38,23 @@ extraInitContainers:
       - sh
       - -c
       - |
-        until nc -z vparking-billing-postgresql 5432 &> /dev/null          
+        until nc -z vparking-billingpostgresql 5432 &> /dev/null          
          do
-           echo "waiting for vparking-billing-postgresql container..."
+           echo "waiting for vparking-billingpostgresql container..."
            sleep 2
          done
   - name: init-kafka
-    image: "confluentinc/cp-kafka:6.1.1"
+    image: "sir5kong/kafka:v3.5.0"
     command: [ "sh", "-c",
       "
-     sh -c 'until nc -z {{.Values.kafkaName}} 9092; do sleep 2; done' &&
-     kafka-topics --bootstrap-server {{.Values.kafkaName}}:9092 --list 
-     echo -e 'Creating kafka topics'&&
-     kafka-topics --bootstrap-server {{.Values.kafkaName}}:9092 --create --if-not-exists --topic new_user --replication-factor 1 --partitions 1 &&
-     kafka-topics --bootstrap-server {{.Values.kafkaName}}:9092 --create --if-not-exists --topic payment --replication-factor 1 --partitions 1 
-     echo -e 'Successfully created the following topics:' &&
-     kafka-topics --bootstrap-server {{.Values.kafkaName}}:9092 --list 
+     apt update && apt install netcat -y &&
+     sh -c 'until nc -z kafka-broker 9092; do sleep 2; done' && cd bin &&
+     ./kafka-topics.sh --bootstrap-server kafka-broker:9092 --list 
+     echo  'Creating kafka topics'&&
+     ./kafka-topics.sh --bootstrap-server kafka-broker:9092 --create --if-not-exists --topic new_user --replication-factor 1 --partitions 1 &&
+     ./kafka-topics.sh --bootstrap-server kafka-broker:9092 --create --if-not-exists --topic payment --replication-factor 1 --partitions 1 
+     echo 'Successfully created the following topics:' &&
+     ./kafka-topics.sh --bootstrap-server kafka-broker:9092 --list 
      " ]
 # This is for the secretes for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
@@ -194,15 +197,20 @@ affinity: {}
 
 dbAuth:
   username: "billing"
-  password: 9ZuzN0KZHl2
+  password: "9ZuzN0KZHl2"
   postgresPassword: "postgres"
-  server: "vparking-billing-postgresql"
+  server: "vparking-billingpostgresql"
   port: 5432
   database: "billing"
 
 prometheus:
   release: "monitoring"
-    
+mypostgres: 
+  user: "billing"
+  password: "9ZuzN0KZHl2"
+  adminPassword: "postgres"
+  serviceName: postgresql
+  db: billing
 postgresql:
   
   primary:

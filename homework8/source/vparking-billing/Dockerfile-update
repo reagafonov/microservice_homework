@@ -38,6 +38,5 @@ ENV PG_CONNECTION_PASSWORD  ''
 ENV PG_ADMIN_PASSWORD  ''
 
 CMD [ "/bin/sh","-c","psql postgresql://postgres:$PG_ADMIN_PASSWORD@$PG_CONNECTION_SERVER:$PG_CONNECTION_PORT/postgres -a -f /escript/extension.sql \
-         && psql postgresql://$PG_CONNECTION_USER:$PG_CONNECTION_PASSWORD@$PG_CONNECTION_SERVER:$PG_CONNECTION_PORT/postgres  -a -c \"CREATE DATABASE \\\"$PG_CONNECTION_DATABASE_NAME\\\";\" \
          && for i in $(seq 1 $(ls /script/*.sql| wc -l)); do psql postgresql://$PG_CONNECTION_USER:$PG_CONNECTION_PASSWORD@$PG_CONNECTION_SERVER:$PG_CONNECTION_PORT/$PG_CONNECTION_DATABASE_NAME -a -f /script/$i.sql; done\
          && psql postgresql://postgres:$PG_ADMIN_PASSWORD@$PG_CONNECTION_SERVER:$PG_CONNECTION_PORT/$PG_CONNECTION_DATABASE_NAME -a -f /escript/extension.sql"]

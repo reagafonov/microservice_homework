@@ -36,9 +36,9 @@ extraInitContainers:
       - sh
       - -c
       - |
-        until nc -z vparking-orders-postgresql 5432 &> /dev/null          
+        until nc -z vparking-orderspostgres-service 5432 &> /dev/null          
          do
-           echo "waiting for vparking-orders-postgresql container..."
+           echo "waiting for vparking-orderspostgres-service container..."
            sleep 2
          done
     
@@ -182,16 +182,22 @@ tolerations: []
 affinity: {}
 
 dbAuth:
-  username: "orders"
+  username: "order"
   password: 9ZuzN0KZHl1
   postgresPassword: "postgres"
-  server: "vparking-orders-postgresql"
+  server: "vparking-orderspostgres-service"
   database: "order"
   port: 5432
 
 prometheus:
   release: "monitoring"
-    
+
+mypostgres:
+  user: "order"
+  password: 9ZuzN0KZHl1
+  adminPassword: postgres
+  db: order
+
 postgresql:
   primary:
     extendedConfiguration: |

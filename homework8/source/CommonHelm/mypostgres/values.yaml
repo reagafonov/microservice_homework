@@ -1,0 +1,7 @@
+serviceName: "postgres-service"
+environment: "postgres"
+password: "qwerty"
+adminPassword: 'postgres'
+user: "user2"
+db: "db"
+namespace : "default"

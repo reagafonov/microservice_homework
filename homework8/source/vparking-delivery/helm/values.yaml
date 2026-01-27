@@ -182,16 +182,22 @@ tolerations: []
 affinity: {}
 
 dbAuth:
-  username: "billing"
+  username: "delivery"
   password: 9ZuzN0KZHl2
   postgresPassword: "postgres"
-  server: "vparking-billing-postgresql"
+  server: "vparking-billingpostgresql"
   port: 5432
-  database: "billing"
+  database: "delivery"
 
 prometheus:
   release: "monitoring"
-    
+  
+mypostgres:
+  user: "delivery"
+  password: 9ZuzN0KZHl2
+  adminPassword: postgres
+  serviceName: postgresql
+ 
 postgresql:
   
   primary:

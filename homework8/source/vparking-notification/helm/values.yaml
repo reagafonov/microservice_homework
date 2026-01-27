@@ -39,22 +39,23 @@ extraInitContainers:
       - sh
       - -c
       - |
-        until nc -z vparking-notification-postgresql 5432 &> /dev/null          
+        until nc -z vparking-notificationpostgresql 5432 &> /dev/null          
          do
-           echo "waiting for vparking-notification-postgresql container..."
+           echo "waiting for vparking-notificationpostgresql container..."
            sleep 2
          done
   - name: init-kafka
-    image: "confluentinc/cp-kafka:6.1.1"
+    image: "sir5kong/kafka:v3.5.0"
     command: [ "sh", "-c",
          "
-        sh -c 'until nc -z {{.Values.kafkaName}} 9092; do sleep 2; done' &&
-        kafka-topics --bootstrap-server {{.Values.kafkaName}}:9092 --list 
-        echo -e 'Creating kafka topics'&&
-        kafka-topics --bootstrap-server {{.Values.kafkaName}}:9092 --create --if-not-exists --topic new_user --replication-factor 1 --partitions 1 &&
-        kafka-topics --bootstrap-server {{.Values.kafkaName}}:9092 --create --if-not-exists --topic payment --replication-factor 1 --partitions 1 
-        echo -e 'Successfully created the following topics:' &&
-        kafka-topics --bootstrap-server {{.Values.kafkaName}}:9092 --list 
+        apt update && apt install netcat -y &&
+        sh -c 'until nc -z kafka-broker 9092; do sleep 2; done' && cd bin &&
+        ./kafka-topics.sh --bootstrap-server kafka-broker:9092 --list 
+        echo 'Creating kafka topics'&&
+        ./kafka-topics.sh --bootstrap-server kafka-broker:9092 --create --if-not-exists --topic new_user --replication-factor 1 --partitions 1 &&
+        ./kafka-topics.sh --bootstrap-server kafka-broker:9092 --create --if-not-exists --topic payment --replication-factor 1 --partitions 1 
+        echo 'Successfully created the following topics:' &&
+        ./kafka-topics.sh --bootstrap-server kafka-broker:9092 --list 
         " ]
     
 # This is for the secretes for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
@@ -200,13 +201,20 @@ dbAuth:
   username: "notification"
   password: 9ZuzN0KZHl3
   postgresPassword: "postgres"
-  server: "vparking-notification-postgresql"
+  server: "vparking-notificationpostgresql"
   port: 5432
   database: "notification"
 
 prometheus:
   release: "monitoring"
-    
+
+mypostgres:
+  user: "notification"
+  password: 9ZuzN0KZHl3
+  adminPassword: postgres
+  serviceName: postgresql
+  db: notification
+  
 postgresql:
   primary:
     extendedConfiguration: |

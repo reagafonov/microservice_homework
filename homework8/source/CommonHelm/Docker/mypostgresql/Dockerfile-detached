@@ -1,0 +1,4 @@
+FROM alpine:3.23.2 AS alpine
+
+RUN apk add postgresql17 --no-cache && mkdir /run/postgresql && chown postgres:postgres /run/postgresql  && su postgres -c "cd && mkdir /var/lib/postgresql/data && chmod 0700 /var/lib/postgresql/data && initdb -D /var/lib/postgresql/data && echo \" host all all 0.0.0.0/0 md5\" >> /var/lib/postgresql/data/pg_hba.conf && echo \"listen_addresses='*'\" >> /var/lib/postgresql/data/postgresql.conf && sed -i \"s|^#* *unix_socket_directories.*$|unix_socket_directories=\'/tmp\'|\" /var/lib/postgresql/data/postgresql.conf && pg_ctl start -D /var/lib/postgresql/data" && apk add openrc --no-cache && touch /etc/local.d/postgres-custom.start && chmod +x /etc/local.d/postgres-custom.start && echo "#!/bin/sh" >> /etc/local.d/postgres-custom.start && echo "su postgres -c 'pg_ctl start -D /var/lib/postgresql/data'" >> /etc/local.d/postgres-custom.start && rc-update add local default && openrc 
+EXPOSE 5432
