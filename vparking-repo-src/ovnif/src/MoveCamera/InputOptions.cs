@@ -1,4 +1,5 @@
 using CommandLine;
+using Core;
 
 namespace MoveCamera;
 
@@ -18,4 +19,10 @@ public class InputOptions
     
     [Option("tilt", Required = true, HelpText = "The position of the onvif")]
     public float Tilt { get; set; }
+
+    [Option(
+        "pan-tilt-format",
+        Required = true,
+        HelpText = "Normalized = pan/tilt in [-1,1] ONVIF generic space; Degrees = degrees (mapped via Xm530 defaults).")]
+    public PtzPanTiltInputFormat PanTiltFormat { get; set; }
 }

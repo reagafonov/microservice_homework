@@ -8,7 +8,9 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Core\Entities\Entities.csproj" />
       <ProjectReference Include="..\Core\Interfaces\Interfaces.csproj" />
+      <ProjectReference Include="..\Infrastructure\SecondaryAdapters\PTZ\PTZ.csproj" />
     </ItemGroup>
 
 </Project>
